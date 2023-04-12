@@ -1,0 +1,6 @@
+{
+    "editor.cursorStyle": "line",
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    }
+}
