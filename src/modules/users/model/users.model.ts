@@ -1,10 +1,24 @@
-import { Column, DataType, Model, Table } from 'sequelize-typescript';
+import {
+  Column,
+  DataType,
+  Model,
+  Sequelize,
+  Table,
+} from 'sequelize-typescript';
+import { UUIDV6_FUNCTION_NAME } from 'src/db/utils/returnUUIDV6PsqlFunction';
+import {
+  IUserModelAttributes,
+  IUserModelCreationAttributes,
+} from './user.model.interface';
 
 @Table
-export class User extends Model {
+export class User extends Model<
+  IUserModelAttributes,
+  IUserModelCreationAttributes
+> {
   @Column({
-    type: DataType.UUIDV4,
-    defaultValue: DataType.UUIDV4,
+    type: DataType.UUID,
+    defaultValue: Sequelize.fn(UUIDV6_FUNCTION_NAME),
     primaryKey: true,
   })
   id: string;
