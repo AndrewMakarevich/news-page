@@ -17,7 +17,7 @@ import {
   IPermissionsModelCreationAttributes,
 } from './permissions.model.interface';
 
-@Table
+@Table({ indexes: [{ unique: true, fields: ['name'] }] })
 export class Permissions extends Model<
   IPermissionsModelAttributes,
   IPermissionsModelCreationAttributes
