@@ -9,5 +9,5 @@ export interface IRolesModelAttributes
   extends IDefaultModelAttributes,
     IRolesModelCreationAttributes {
   users?: Users[];
-  permissions: Permissions[];
+  permissions?: Permissions[];
 }
