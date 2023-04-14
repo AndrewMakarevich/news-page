@@ -18,6 +18,7 @@ import {
   MIN_USER_USERNAME_LENGTH,
 } from '../users.const';
 import { Comments, Posts, Roles } from 'src/db/models/models';
+import { Sessions } from 'src/modules/sessions/model/sessions.model';
 
 @Table
 export class Users extends Model<
@@ -63,4 +64,7 @@ export class Users extends Model<
 
   @HasMany(() => Comments)
   comments: Comments[];
+
+  @HasMany(() => Sessions)
+  sessions: Sessions;
 }

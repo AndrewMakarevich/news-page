@@ -15,6 +15,7 @@ import {
   Comments,
   Collections,
   PostsCollections,
+  Sessions,
 } from './db/models/models';
 import { RolesModule } from './modules/roles/roles.module';
 import { PermissionsModule } from './modules/permissions/permissions.module';
@@ -25,6 +26,7 @@ import { PostsTagsModule } from './modules/postsTags/postsTags.module';
 import { CommentsModule } from './modules/comments/comments.module';
 import { CollectionsModule } from './modules/collections/collections.module';
 import { PostsCollectionsModule } from './modules/postsCollections/postsCollections.module';
+import { SessionsModule } from './modules/sessions/sessions.module';
 
 dotenv.config();
 const sequelizeConfig = dbConfig[env.NODE_ENV || 'development'];
@@ -41,6 +43,7 @@ const sequelizeConfig = dbConfig[env.NODE_ENV || 'development'];
     CommentsModule,
     CollectionsModule,
     PostsCollectionsModule,
+    SessionsModule,
     SequelizeModule.forRoot({
       ...sequelizeConfig,
       autoLoadModels: true,
@@ -56,6 +59,7 @@ const sequelizeConfig = dbConfig[env.NODE_ENV || 'development'];
         Comments,
         Collections,
         PostsCollections,
+        Sessions,
       ],
       logging: console.log,
     }),
