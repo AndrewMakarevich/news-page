@@ -1,4 +1,5 @@
 import { IDefaultModelAttributes } from 'src/db/models/models.interface';
+import { Tags } from 'src/modules/tags/model/tags.model';
 
 export interface IPostsModelCreationAttributes {
   header: string;
@@ -8,4 +9,6 @@ export interface IPostsModelCreationAttributes {
 
 export interface IPostsModelAttributes
   extends IDefaultModelAttributes,
-    IPostsModelCreationAttributes {}
+    IPostsModelCreationAttributes {
+  tags?: Tags[];
+}
