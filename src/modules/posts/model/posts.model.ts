@@ -1,0 +1,50 @@
+import { DataTypes } from 'sequelize';
+import {
+  DataType,
+  Table,
+  Model,
+  Sequelize,
+  Column,
+  BelongsTo,
+  ForeignKey,
+} from 'sequelize-typescript';
+import { UUIDV6_FUNCTION_NAME } from 'src/db/utils/returnUUIDV6PsqlFunction';
+import { MAX_POST_HEADER_LENGTH, MIN_POST_HEADER_LENGTH } from '../posts.const';
+import { Users } from 'src/db/models/models';
+import {
+  IPostsModelAttributes,
+  IPostsModelCreationAttributes,
+} from './posts.model.interface';
+
+@Table
+export class Posts extends Model<
+  IPostsModelAttributes,
+  IPostsModelCreationAttributes
+> {
+  @Column({
+    type: DataType.UUID,
+    defaultValue: Sequelize.fn(UUIDV6_FUNCTION_NAME),
+    primaryKey: true,
+  })
+  id: string;
+
+  @Column({
+    type: DataTypes.STRING(MAX_POST_HEADER_LENGTH),
+    validate: { min: MIN_POST_HEADER_LENGTH },
+    allowNull: false,
+  })
+  header: string;
+
+  @Column({
+    type: DataTypes.TEXT,
+    allowNull: false,
+  })
+  text: string;
+
+  @ForeignKey(() => Users)
+  @Column({ type: DataType.UUID })
+  authorId: string;
+
+  @BelongsTo(() => Users)
+  author: Users;
+}
