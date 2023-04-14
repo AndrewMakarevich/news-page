@@ -1,0 +1,2 @@
+export const MIN_COMMENT_TEXT_LENGTH = 2;
+export const MAX_COMMENT_TEXT_LENGTH = 250;

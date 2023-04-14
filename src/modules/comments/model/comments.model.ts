@@ -13,6 +13,10 @@ import {
   ICommentsModelCreationAttributes,
 } from './comments.model.interface';
 import { Posts, Users } from 'src/db/models/models';
+import {
+  MAX_COMMENT_TEXT_LENGTH,
+  MIN_COMMENT_TEXT_LENGTH,
+} from '../comments.const';
 
 @Table
 export class Comments extends Model<
@@ -27,8 +31,8 @@ export class Comments extends Model<
   id: string;
 
   @Column({
-    type: DataType.STRING(250),
-    validate: { min: 2 },
+    type: DataType.STRING(MAX_COMMENT_TEXT_LENGTH),
+    validate: { min: MIN_COMMENT_TEXT_LENGTH },
     allowNull: false,
   })
   text: string;

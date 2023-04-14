@@ -12,6 +12,9 @@ import {
   Users,
   Tags,
   PostsTags,
+  Comments,
+  Collections,
+  PostsCollections,
 } from './db/models/models';
 import { RolesModule } from './modules/roles/roles.module';
 import { PermissionsModule } from './modules/permissions/permissions.module';
@@ -20,6 +23,8 @@ import { PostsModule } from './modules/posts/posts.module';
 import { TagsModule } from './modules/tags/tags.module';
 import { PostsTagsModule } from './modules/postsTags/postsTags.module';
 import { CommentsModule } from './modules/comments/comments.module';
+import { CollectionsModule } from './modules/collections/collections.module';
+import { PostsCollectionsModule } from './modules/postsCollections/postsCollections.module';
 
 dotenv.config();
 const sequelizeConfig = dbConfig[env.NODE_ENV || 'development'];
@@ -33,6 +38,9 @@ const sequelizeConfig = dbConfig[env.NODE_ENV || 'development'];
     PostsModule,
     TagsModule,
     PostsTagsModule,
+    CommentsModule,
+    CollectionsModule,
+    PostsCollectionsModule,
     SequelizeModule.forRoot({
       ...sequelizeConfig,
       autoLoadModels: true,
@@ -45,6 +53,9 @@ const sequelizeConfig = dbConfig[env.NODE_ENV || 'development'];
         Posts,
         Tags,
         PostsTags,
+        Comments,
+        Collections,
+        PostsCollections,
       ],
       logging: console.log,
     }),
