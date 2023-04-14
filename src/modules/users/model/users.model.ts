@@ -1,20 +1,27 @@
 import {
+  BelongsTo,
   Column,
   DataType,
+  ForeignKey,
   Model,
   Sequelize,
   Table,
 } from 'sequelize-typescript';
 import { UUIDV6_FUNCTION_NAME } from 'src/db/utils/returnUUIDV6PsqlFunction';
 import {
-  IUserModelAttributes,
-  IUserModelCreationAttributes,
+  IUsersModelAttributes,
+  IUsersModelCreationAttributes,
 } from './user.model.interface';
+import {
+  MAX_USER_USERNAME_LENGTH,
+  MIN_USER_USERNAME_LENGTH,
+} from '../users.const';
+import { Roles } from 'src/db/models/models';
 
 @Table
-export class User extends Model<
-  IUserModelAttributes,
-  IUserModelCreationAttributes
+export class Users extends Model<
+  IUsersModelAttributes,
+  IUsersModelCreationAttributes
 > {
   @Column({
     type: DataType.UUID,
@@ -23,7 +30,11 @@ export class User extends Model<
   })
   id: string;
 
-  @Column({ type: DataType.STRING(45), allowNull: false, validate: { min: 2 } })
+  @Column({
+    type: DataType.STRING(MAX_USER_USERNAME_LENGTH),
+    allowNull: false,
+    validate: { min: MIN_USER_USERNAME_LENGTH },
+  })
   username: string;
 
   @Column({
@@ -38,4 +49,11 @@ export class User extends Model<
 
   @Column({ type: DataType.BOOLEAN, defaultValue: false })
   isBlocked: boolean;
+
+  @ForeignKey(() => Roles)
+  @Column({ type: DataType.UUID })
+  roleId: string;
+
+  @BelongsTo(() => Roles)
+  role: Roles;
 }

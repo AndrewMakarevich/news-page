@@ -1,13 +1,16 @@
+import { Roles } from 'src/db/models/models';
 import { IDefaultModelAttributes } from 'src/db/models/models.interface';
 
-export interface IUserModelCreationAttributes {
+export interface IUsersModelCreationAttributes {
   username: string;
   email: string;
   password: string;
+  roleId: string;
 }
 
-export interface IUserModelAttributes
+export interface IUsersModelAttributes
   extends IDefaultModelAttributes,
-    IUserModelCreationAttributes {
+    IUsersModelCreationAttributes {
   isBlocked: boolean;
+  role?: Roles;
 }
