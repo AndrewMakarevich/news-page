@@ -5,3 +5,4 @@ export { RolesPermissions } from '../../modules/rolesPermissions/model/rolesPerm
 export { Posts } from '../../modules/posts/model/posts.model';
 export { Tags } from '../../modules/tags/model/tags.model';
 export { PostsTags } from '../../modules/postsTags/model/postsTags.model';
+export { Comments } from '../../modules/comments/model/comments.model';

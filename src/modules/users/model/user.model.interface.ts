@@ -1,4 +1,4 @@
-import { Roles } from 'src/db/models/models';
+import { Comments, Posts, Roles } from 'src/db/models/models';
 import { IDefaultModelAttributes } from 'src/db/models/models.interface';
 
 export interface IUsersModelCreationAttributes {
@@ -13,4 +13,6 @@ export interface IUsersModelAttributes
     IUsersModelCreationAttributes {
   isBlocked: boolean;
   role?: Roles;
+  posts?: Posts[];
+  comments?: Comments[];
 }

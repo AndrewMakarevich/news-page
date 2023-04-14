@@ -19,6 +19,7 @@ import { RolesPermissionsModule } from './modules/rolesPermissions/rolesPermissi
 import { PostsModule } from './modules/posts/posts.module';
 import { TagsModule } from './modules/tags/tags.module';
 import { PostsTagsModule } from './modules/postsTags/postsTags.module';
+import { CommentsModule } from './modules/comments/comments.module';
 
 dotenv.config();
 const sequelizeConfig = dbConfig[env.NODE_ENV || 'development'];
@@ -48,6 +49,7 @@ const sequelizeConfig = dbConfig[env.NODE_ENV || 'development'];
       logging: console.log,
     }),
     TagsModule,
+    CommentsModule,
   ],
 })
 export class AppModule {}

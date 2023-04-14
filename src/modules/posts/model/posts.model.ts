@@ -8,10 +8,11 @@ import {
   BelongsTo,
   ForeignKey,
   BelongsToMany,
+  HasMany,
 } from 'sequelize-typescript';
 import { UUIDV6_FUNCTION_NAME } from 'src/db/utils/returnUUIDV6PsqlFunction';
 import { MAX_POST_HEADER_LENGTH, MIN_POST_HEADER_LENGTH } from '../posts.const';
-import { Users } from 'src/db/models/models';
+import { Comments, Users } from 'src/db/models/models';
 import {
   IPostsModelAttributes,
   IPostsModelCreationAttributes,
@@ -53,4 +54,7 @@ export class Posts extends Model<
 
   @BelongsToMany(() => Tags, () => PostsTags)
   tags: Tags[];
+
+  @HasMany(() => Comments)
+  comments: Comments;
 }

@@ -3,6 +3,7 @@ import {
   Column,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Sequelize,
   Table,
@@ -16,7 +17,7 @@ import {
   MAX_USER_USERNAME_LENGTH,
   MIN_USER_USERNAME_LENGTH,
 } from '../users.const';
-import { Roles } from 'src/db/models/models';
+import { Comments, Posts, Roles } from 'src/db/models/models';
 
 @Table
 export class Users extends Model<
@@ -56,4 +57,10 @@ export class Users extends Model<
 
   @BelongsTo(() => Roles)
   role: Roles;
+
+  @HasMany(() => Posts)
+  posts: Posts[];
+
+  @HasMany(() => Comments)
+  comments: Comments[];
 }
