@@ -8,14 +8,11 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "prestart": "npm run sequelize:pre:seed",
     "start": "nest start",
-    "poststart": "sequelize:post:seed",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
 
-    "presequelize:pre:seed": "npm run build",
     "sequelize:pre:seed": "cross-env SEED_HOOK=pre sequelize-cli db:seed:all",
     "sequelize:post:seed": "cross-env SEED_HOOK=post sequelize-cli db:seed:all",
     "sequelize:pre:seed:undo": "cross-env SEED_HOOK=pre sequelize-cli db:seed:undo:all",

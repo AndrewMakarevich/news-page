@@ -24,6 +24,7 @@ import {
 } from './posts.model.interface';
 import { Tags } from 'src/modules/tags/model/tags.model';
 import { PostsTags } from 'src/modules/postsTags/model/postsTags.model';
+import { Images } from 'src/modules/images/model/images.model';
 
 @Table
 export class Posts extends Model<
@@ -65,4 +66,7 @@ export class Posts extends Model<
 
   @HasMany(() => Comments)
   comments: Comments;
+
+  @HasMany(() => Images)
+  images: Images[];
 }

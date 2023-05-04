@@ -4,6 +4,7 @@ import {
   DataType,
   ForeignKey,
   HasMany,
+  HasOne,
   Model,
   Sequelize,
   Table,
@@ -19,6 +20,7 @@ import {
 } from '../users.const';
 import { Comments, Posts, Roles } from 'src/db/models/models';
 import { Sessions } from 'src/modules/sessions/model/sessions.model';
+import { Images } from 'src/modules/images/model/images.model';
 
 @Table
 export class Users extends Model<
@@ -55,6 +57,13 @@ export class Users extends Model<
   @ForeignKey(() => Roles)
   @Column({ type: DataType.UUID })
   roleId: string;
+
+  @ForeignKey(() => Images)
+  @Column({ type: DataType.UUID })
+  avatarId: string;
+
+  @BelongsTo(() => Images)
+  avatar: Images;
 
   @BelongsTo(() => Roles)
   role: Roles;

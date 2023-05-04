@@ -9,3 +9,4 @@ export { Comments } from '../../modules/comments/model/comments.model';
 export { Collections } from '../../modules/collections/model/collections.model';
 export { PostsCollections } from '../../modules/postsCollections/model/postsCollections.model';
 export { Sessions } from '../../modules/sessions/model/sessions.model';
+export { Images } from '../../modules/images/model/images.model';
