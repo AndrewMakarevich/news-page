@@ -28,6 +28,7 @@ import { CommentsModule } from './modules/comments/comments.module';
 import { CollectionsModule } from './modules/collections/collections.module';
 import { PostsCollectionsModule } from './modules/postsCollections/postsCollections.module';
 import { SessionsModule } from './modules/sessions/sessions.module';
+import { ImagesModule } from './modules/images/images.module';
 
 dotenv.config();
 const sequelizeConfig = dbConfig[env.NODE_ENV || 'development'];
@@ -45,6 +46,7 @@ const sequelizeConfig = dbConfig[env.NODE_ENV || 'development'];
     CollectionsModule,
     PostsCollectionsModule,
     SessionsModule,
+    ImagesModule,
     SequelizeModule.forRoot({
       ...sequelizeConfig,
       autoLoadModels: true,
