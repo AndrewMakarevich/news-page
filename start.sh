@@ -4,7 +4,7 @@ npm run build
 
 npm run sequelize:pre:seed 
 
-npm run start | while read line; do
+node dist/main | while read line; do
 echo $line
 if [[ "$line" == *"Nest application successfully started"* ]]; 
     then
