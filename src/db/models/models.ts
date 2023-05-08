@@ -1,0 +1,12 @@
+export { Users } from '../../modules/users/model/users.model';
+export { Roles } from '../../modules/roles/model/roles.model';
+export { Permissions } from '../../modules/permissions/model/permissions.model';
+export { RolesPermissions } from '../../modules/rolesPermissions/model/rolesPermissions.model';
+export { Posts } from '../../modules/posts/model/posts.model';
+export { Tags } from '../../modules/tags/model/tags.model';
+export { PostsTags } from '../../modules/postsTags/model/postsTags.model';
+export { Comments } from '../../modules/comments/model/comments.model';
+export { Collections } from '../../modules/collections/model/collections.model';
+export { PostsCollections } from '../../modules/postsCollections/model/postsCollections.model';
+export { Sessions } from '../../modules/sessions/model/sessions.model';
+export { Images } from '../../modules/images/model/images.model';
