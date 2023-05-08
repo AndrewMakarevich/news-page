@@ -29,6 +29,7 @@ import { CollectionsModule } from './modules/collections/collections.module';
 import { PostsCollectionsModule } from './modules/postsCollections/postsCollections.module';
 import { SessionsModule } from './modules/sessions/sessions.module';
 import { ImagesModule } from './modules/images/images.module';
+import { RedisModule } from './modules/redis/redis.module';
 
 dotenv.config();
 const sequelizeConfig = dbConfig[env.NODE_ENV || 'development'];
@@ -47,6 +48,8 @@ const sequelizeConfig = dbConfig[env.NODE_ENV || 'development'];
     PostsCollectionsModule,
     SessionsModule,
     ImagesModule,
+    TagsModule,
+    CommentsModule,
     SequelizeModule.forRoot({
       ...sequelizeConfig,
       autoLoadModels: true,
@@ -67,8 +70,12 @@ const sequelizeConfig = dbConfig[env.NODE_ENV || 'development'];
       ],
       logging: console.log,
     }),
-    TagsModule,
-    CommentsModule,
+    RedisModule.forRoot({
+      socket: {
+        host: env.REDIS_HOST,
+        port: +env.REDIS_PORT || 6379,
+      },
+    }),
   ],
 })
 export class AppModule {}

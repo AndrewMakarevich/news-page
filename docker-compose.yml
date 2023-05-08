@@ -3,25 +3,39 @@ services:
     env_file:
       - docker.env
     build: .
-    ports: 
-      - "3000:3000"
+    ports:
+      - '3000:3000'
     depends_on:
       postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
   postgres:
     env_file:
       - docker.env
     container_name: $DB_HOST
     build: ./src/db
-    ports: 
-      - "5433:5432"
-
+    ports:
+      - '5433:5432'
     healthcheck:
-      test:         [
+      test:
+        [
           'CMD-SHELL',
           'pg_isready -U $DB_USER -d $DEV_DB_NAME -h localhost -p $DB_PORT',
         ]
-
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+  redis:
+    env_file:
+      - docker.env
+    container_name: $REDIS_HOST
+    image: redis:7
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
       timeout: 10s
       retries: 3
