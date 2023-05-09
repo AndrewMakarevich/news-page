@@ -13,6 +13,7 @@ export interface IUsersModelAttributes
   extends IDefaultModelAttributes,
     IUsersModelCreationAttributes {
   isBlocked: boolean;
+  isActivated: boolean;
   role?: Roles;
   posts?: Posts[];
   comments?: Comments[];

@@ -38,6 +38,7 @@ export class Users extends Model<
     type: DataType.STRING(MAX_USER_USERNAME_LENGTH),
     allowNull: false,
     validate: { min: MIN_USER_USERNAME_LENGTH },
+    unique: true,
   })
   username: string;
 
@@ -45,6 +46,7 @@ export class Users extends Model<
     type: DataType.STRING,
     allowNull: false,
     validate: { isEmail: true },
+    unique: true,
   })
   email: string;
 
@@ -53,6 +55,9 @@ export class Users extends Model<
 
   @Column({ type: DataType.BOOLEAN, defaultValue: false })
   isBlocked: boolean;
+
+  @Column({ type: DataType.BOOLEAN, defaultValue: false })
+  isActivated: boolean;
 
   @ForeignKey(() => Roles)
   @Column({ type: DataType.UUID })
