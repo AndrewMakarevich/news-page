@@ -23,8 +23,6 @@ export class GlobalFilter extends BaseExceptionFilter {
       (exception as HttpException).stack = exceptionStack;
     }
 
-    console.log(exception);
-
     super.catch(exception, host);
   }
 }

@@ -2,7 +2,7 @@ import { EmailConstraint } from 'src/decorators/constraints/users/emailConstrain
 import { PasswordConstraint } from 'src/decorators/constraints/users/passwordConstraint.decorator';
 import { UsernameConstraint } from 'src/decorators/constraints/users/usernameConstraint.decorator';
 
-export class RegistrateDto {
+export class RegisterDto {
   @UsernameConstraint()
   username: string;
 

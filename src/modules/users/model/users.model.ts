@@ -21,6 +21,7 @@ import {
 import { Comments, Posts, Roles } from 'src/db/models/models';
 import { Sessions } from 'src/modules/sessions/model/sessions.model';
 import { Images } from 'src/modules/images/model/images.model';
+import { DataTypes } from 'sequelize';
 
 @Table
 export class Users extends Model<
@@ -49,6 +50,13 @@ export class Users extends Model<
     unique: true,
   })
   email: string;
+
+  @Column({
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    allowNull: false,
+  })
+  activationToken: string;
 
   @Column({ type: DataType.CHAR(60), allowNull: false })
   password: string;

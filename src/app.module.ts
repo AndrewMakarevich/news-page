@@ -32,6 +32,7 @@ import { ImagesModule } from './modules/images/images.module';
 import { RedisModule } from './modules/redis/redis.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { TokensModule } from './modules/tokens/tokens.module';
+import { NodeMailerModule } from './modules/nodemailer/nodemailer.module';
 
 dotenv.config();
 const sequelizeConfig = dbConfig[env.NODE_ENV || 'development'];
@@ -75,9 +76,20 @@ const sequelizeConfig = dbConfig[env.NODE_ENV || 'development'];
       logging: console.log,
     }),
     RedisModule.forRoot({
+      name: env.REDIS_NAME,
       socket: {
         host: env.REDIS_HOST,
-        port: +env.REDIS_PORT || 6379,
+        port: +env.REDIS_INTERNAL_PORT || 6379,
+      },
+    }),
+    NodeMailerModule.forRoot({
+      transport: {
+        host: 'smtp.gmail.com',
+        port: 465,
+        auth: {
+          user: 'andrew.news.2023@gmail.com',
+          pass: '',
+        },
       },
     }),
   ],

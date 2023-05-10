@@ -1,6 +1,6 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get } from '@nestjs/common';
 import { AuthService as AuthServiceClass } from '../service/auth.service';
-import { RegistrateDto } from '../auth.dto';
+import { RegisterDto } from '../auth.dto';
 import { Sequelize } from 'sequelize-typescript';
 
 @Controller('auth')
@@ -10,13 +10,12 @@ export class AuthController {
     private AuthService: AuthServiceClass,
   ) {}
 
-  @Post('registrate')
-  async registrate(@Body() registrateDto: RegistrateDto) {
+  @Post('register')
+  async register(@Body() { username, email, password }: RegisterDto) {
     const transaction = await this.sequelize.transaction();
 
     try {
-      const { username, email, password } = registrateDto;
-      const response = await this.AuthService.registrate({
+      const response = await this.AuthService.register({
         username,
         email,
         password,

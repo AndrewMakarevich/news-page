@@ -10,7 +10,7 @@ export class UsersRepository {
   addUser({ username, email, password, transaction }: IAddUser) {
     return this.UsersModel.create(
       { username, email, password },
-      { transaction },
+      { transaction, returning: true },
     );
   }
 }

@@ -12,6 +12,7 @@ export interface IUsersModelCreationAttributes {
 export interface IUsersModelAttributes
   extends IDefaultModelAttributes,
     IUsersModelCreationAttributes {
+  activationToken: string;
   isBlocked: boolean;
   isActivated: boolean;
   role?: Roles;
