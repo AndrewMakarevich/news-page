@@ -1,11 +1,25 @@
 import { applyDecorators } from '@nestjs/common';
 import { MinLength, MaxLength } from 'class-validator';
-import { getLengthValidationMsg } from 'src/modules/auth/utils/getLengthValidationMsg';
 
 interface IMinMaxConstraintParams {
   min: number;
   max: number;
   entityName: string;
+}
+
+export function getLengthValidationMsg(
+  entityName: string,
+  validEntityLength: number,
+  validationType: 'min' | 'max',
+) {
+  switch (validationType) {
+    case 'min':
+      return `${entityName} is too short, minimum length is ${validEntityLength}`;
+    case 'max':
+      return `${entityName} is too long, maximum length is ${validEntityLength}`;
+    default:
+      return '';
+  }
 }
 
 export function MinMaxConstraint({

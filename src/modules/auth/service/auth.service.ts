@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
+import { hash } from 'bcrypt';
+import * as dotenv from 'dotenv';
+import { env } from 'process';
 import { UsersRepository as UsersRepositoryClass } from 'src/modules/users/repository/users.repository';
 import {
   IRegisterParams,
   INotifyAfterRegisterParams,
   IGetUserActivationLinkParams,
 } from './auth.service.interface';
-import { hash } from 'bcrypt';
 import { NodeMailerService as NodeMailerServiceClass } from 'src/modules/nodemailer/service/nodemailer.service';
-import { URL } from 'url';
+
+dotenv.config();
 
 @Injectable()
 export class AuthService {
@@ -25,12 +28,15 @@ export class AuthService {
       password: hashedPassword,
       transaction,
     });
-
     const notificationResult = await this.notifyAfterRegister({
       username: user.username,
       email: user.email,
       activationToken: user.activationToken,
     });
+
+    console.log(notificationResult);
+
+    return user;
   }
 
   private async notifyAfterRegister({
@@ -56,6 +62,6 @@ export class AuthService {
   private getUserActivationLink({
     activationToken,
   }: IGetUserActivationLinkParams) {
-    return `http://localhost:3000/auth/activate/${activationToken}`;
+    return `${env.APP_PROTOCOL}://${env.APP_DOMAIN}:${env.APP_LOCAL_PORT}/auth/activate/${activationToken}`;
   }
 }

@@ -19,10 +19,10 @@ async function bootstrap() {
     }),
   );
   app.useGlobalFilters(
-    new ValidationErrorFilter(),
     new GlobalFilter(httpAdapter),
+    new ValidationErrorFilter(),
   );
 
-  await app.listen(env.APP_PORT);
+  await app.listen(env.APP_INTERNAL_PORT);
 }
 bootstrap();

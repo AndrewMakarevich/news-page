@@ -5,11 +5,15 @@ import { env } from 'process';
 
 dotenv.config();
 
-export const development: SequelizeModuleOptions = {
+const common: SequelizeModuleOptions = {
   database: env.DB_NAME,
-  host: env.DB_HOST,
+  host: env.DB_CONTAINER_NAME,
   port: +env.DB_INTERNAL_PORT || 5432,
   username: env.DB_USER,
   password: env.DB_PASSWORD,
   dialect: env.DB_DIALECT as Dialect,
 };
+
+export const development = common;
+export const production = common;
+export const test = common;
