@@ -1,27 +1,31 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { hash } from 'bcrypt';
 import * as dotenv from 'dotenv';
-import { env } from 'process';
 import { UsersRepository as UsersRepositoryClass } from 'src/modules/users/repository/users.repository';
 import {
   IRegisterParams,
   INotifyAfterRegisterParams,
-  IGetUserActivationLinkParams,
   IActivateParams,
+  ILoginParams,
 } from './auth.service.interface';
 import { NodeMailerService as NodeMailerServiceClass } from 'src/modules/nodemailer/service/nodemailer.service';
+import { pepperisePassword } from '../utils/pepperisePassword';
+import { comparePasswords } from '../utils/comparePasswords';
+import { TokensService as TokensServiceClass } from 'src/modules/tokens/service/tokens.service';
+import { getUserActivationLink } from '../utils/getUserActivationLink';
 
 dotenv.config();
 
 @Injectable()
 export class AuthService {
   constructor(
-    private UsersRepository: UsersRepositoryClass,
     private NodeMailerService: NodeMailerServiceClass,
+    private TokensService: TokensServiceClass,
+    private UsersRepository: UsersRepositoryClass,
   ) {}
 
   async register({ username, email, password, transaction }: IRegisterParams) {
-    const hashedPassword = await hash(password, 12);
+    const hashedPassword = await hash(pepperisePassword({ password }), 12);
 
     const user = await this.UsersRepository.addUser({
       username,
@@ -44,12 +48,37 @@ export class AuthService {
     return this.UsersRepository.activateUser({ activationToken });
   }
 
+  async login({ username, password }: ILoginParams) {
+    const user = await this.UsersRepository.getOneUser({
+      advancedOptions: { where: { username } },
+    });
+
+    if (!user) {
+      throw new BadRequestException("User with such username doesn't exists");
+    }
+
+    const passwordsEquals = comparePasswords({
+      plainPassword: password,
+      hashedPassword: user.password,
+    });
+
+    if (!passwordsEquals) {
+      throw new BadRequestException('Incorrect password');
+    }
+
+    const { accessToken, refreshToken } = this.TokensService.generateTokensPair(
+      { user },
+    );
+
+    return { accessToken, refreshToken };
+  }
+
   private async notifyAfterRegister({
     username,
     email,
     activationToken,
   }: INotifyAfterRegisterParams) {
-    const activationLink = this.getUserActivationLink({ activationToken });
+    const activationLink = getUserActivationLink({ activationToken });
 
     return this.NodeMailerService.sendMail({
       to: email,
@@ -62,11 +91,5 @@ export class AuthService {
         </div>
       `,
     });
-  }
-
-  private getUserActivationLink({
-    activationToken,
-  }: IGetUserActivationLinkParams) {
-    return `${env.APP_PROTOCOL}://${env.APP_DOMAIN}:${env.APP_LOCAL_PORT}/auth/activate/${activationToken}`;
   }
 }

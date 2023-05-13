@@ -1,10 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Users } from '../model/users.model';
 import {
   IActivateUserParams,
   IAddUserParams,
+  IGetOneUserParams,
 } from './users.repository.interface';
+import { Users, Roles, Permissions } from 'src/db/models/models';
+import { FindOptions } from 'sequelize';
+import { IUsersModelAttributes } from '../model/user.model.interface';
 
 @Injectable()
 export class UsersRepository {
@@ -15,6 +18,20 @@ export class UsersRepository {
       { username, email, password },
       { transaction, returning: true },
     );
+  }
+
+  /**
+   @If no parameters passed search will be executed with userId=0
+   @advancedOptions overrides default configuration
+   */
+  getOneUser({ userId, advancedOptions }: IGetOneUserParams) {
+    const defaultFindOptions: FindOptions<IUsersModelAttributes> = {
+      where: { id: userId || 0 },
+      include: [{ model: Roles, include: [{ model: Permissions }] }],
+    };
+    const findOptions = advancedOptions ? advancedOptions : defaultFindOptions;
+
+    return this.UsersModel.findOne(findOptions);
   }
 
   async activateUser({ activationToken }: IActivateUserParams) {

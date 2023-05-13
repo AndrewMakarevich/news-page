@@ -4,5 +4,10 @@ import { Sessions } from '../model/sessions.model';
 
 @Injectable()
 export class SessionsRepository {
-  constructor(@InjectModel(Sessions) private SessionsModel: Sessions) {}
+  constructor(@InjectModel(Sessions) private SessionsModel: Sessions) {
+  }
+
+  addSession(){
+    
+  }
 }

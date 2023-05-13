@@ -12,12 +12,13 @@ export interface IActivateParams {
   transaction: Transaction;
 }
 
+export interface ILoginParams {
+  username: string;
+  password: string;
+}
+
 export interface INotifyAfterRegisterParams {
   username: string;
   email: string;
-  activationToken: string;
-}
-
-export interface IGetUserActivationLinkParams {
   activationToken: string;
 }

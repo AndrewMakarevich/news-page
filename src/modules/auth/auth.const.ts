@@ -1,3 +1,1 @@
-// RESOURCE IDS
-export const AUTH_CONTROLLER_RESOURCE_ID = 'auth';
-export const AUTH_ACTIVATION_RESOURCE_ID = 'activate/:activationToken';
+export const REFRESH_TOKEN_COOKIE_NAME = 'refreshToken';
