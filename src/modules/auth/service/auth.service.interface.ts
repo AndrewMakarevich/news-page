@@ -7,6 +7,11 @@ export interface IRegisterParams {
   transaction: Transaction;
 }
 
+export interface IActivateParams {
+  activationToken: string;
+  transaction: Transaction;
+}
+
 export interface INotifyAfterRegisterParams {
   username: string;
   email: string;

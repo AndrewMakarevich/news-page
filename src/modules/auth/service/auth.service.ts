@@ -7,6 +7,7 @@ import {
   IRegisterParams,
   INotifyAfterRegisterParams,
   IGetUserActivationLinkParams,
+  IActivateParams,
 } from './auth.service.interface';
 import { NodeMailerService as NodeMailerServiceClass } from 'src/modules/nodemailer/service/nodemailer.service';
 
@@ -37,6 +38,10 @@ export class AuthService {
     console.log(notificationResult);
 
     return user;
+  }
+
+  async activate({ activationToken }: IActivateParams) {
+    return this.UsersRepository.activateUser({ activationToken });
   }
 
   private async notifyAfterRegister({

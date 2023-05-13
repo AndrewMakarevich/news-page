@@ -1,6 +1,6 @@
-import { Controller, Post, Body, Get } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 import { AuthService as AuthServiceClass } from '../service/auth.service';
-import { RegisterDto } from '../auth.dto';
+import { ActivateDto, RegisterDto } from '../auth.dto';
 import { Sequelize } from 'sequelize-typescript';
 
 @Controller('auth')
@@ -25,6 +25,24 @@ export class AuthController {
       await transaction.commit();
 
       return response;
+    } catch (err) {
+      await transaction.rollback();
+
+      throw err;
+    }
+  }
+
+  @Get('activate/:activationToken')
+  async activate(@Param() { activationToken }: ActivateDto) {
+    const transaction = await this.sequelize.transaction();
+
+    try {
+      const response = await this.AuthService.activate({
+        activationToken,
+        transaction,
+      });
+
+      await transaction.commit();
     } catch (err) {
       await transaction.rollback();
 
