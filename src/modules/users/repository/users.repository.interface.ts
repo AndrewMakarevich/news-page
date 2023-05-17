@@ -15,4 +15,5 @@ export interface IGetOneUserParams {
 
 export interface IActivateUserParams {
   activationToken: string;
+  transaction: Transaction;
 }

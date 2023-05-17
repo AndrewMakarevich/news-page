@@ -1,18 +1,27 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { hash } from 'bcrypt';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
+import { env } from 'process';
+import * as bcrypt from 'bcrypt';
 import * as dotenv from 'dotenv';
+
 import { UsersRepository as UsersRepositoryClass } from 'src/modules/users/repository/users.repository';
 import {
   IRegisterParams,
   INotifyAfterRegisterParams,
   IActivateParams,
   ILoginParams,
+  IComparePasswordsParams,
+  IGetUserActivationLinkParams,
+  IPepperisePasswordParams,
 } from './auth.service.interface';
 import { NodeMailerService as NodeMailerServiceClass } from 'src/modules/nodemailer/service/nodemailer.service';
-import { pepperisePassword } from '../utils/pepperisePassword';
-import { comparePasswords } from '../utils/comparePasswords';
 import { TokensService as TokensServiceClass } from 'src/modules/tokens/service/tokens.service';
-import { getUserActivationLink } from '../utils/getUserActivationLink';
+import { SessionsService as SessionsServiceClass } from 'src/modules/sessions/service/sessions.service';
+import { SessionsRepository as SessionsRepositoryClass } from 'src/modules/sessions/repository/sessions.repository';
+import { MAX_USER_PASSWORD_LENGTH } from 'src/modules/users/users.const';
 
 dotenv.config();
 
@@ -21,11 +30,16 @@ export class AuthService {
   constructor(
     private NodeMailerService: NodeMailerServiceClass,
     private TokensService: TokensServiceClass,
+    private SessionsService: SessionsServiceClass,
     private UsersRepository: UsersRepositoryClass,
   ) {}
 
   async register({ username, email, password, transaction }: IRegisterParams) {
-    const hashedPassword = await hash(pepperisePassword({ password }), 12);
+    console.log(bcrypt);
+    const hashedPassword = await bcrypt.hash(
+      this.pepperisePassword({ password }),
+      12,
+    );
 
     const user = await this.UsersRepository.addUser({
       username,
@@ -33,22 +47,21 @@ export class AuthService {
       password: hashedPassword,
       transaction,
     });
-    const notificationResult = await this.notifyAfterRegister({
+
+    this.notifyAfterRegister({
       username: user.username,
       email: user.email,
       activationToken: user.activationToken,
     });
 
-    console.log(notificationResult);
-
     return user;
   }
 
-  async activate({ activationToken }: IActivateParams) {
-    return this.UsersRepository.activateUser({ activationToken });
+  async activate({ activationToken, transaction }: IActivateParams) {
+    return this.UsersRepository.activateUser({ activationToken, transaction });
   }
 
-  async login({ username, password }: ILoginParams) {
+  async login({ userIp, username, password, transaction }: ILoginParams) {
     const user = await this.UsersRepository.getOneUser({
       advancedOptions: { where: { username } },
     });
@@ -57,7 +70,15 @@ export class AuthService {
       throw new BadRequestException("User with such username doesn't exists");
     }
 
-    const passwordsEquals = comparePasswords({
+    if (!user.isActivated) {
+      throw new ForbiddenException('User is not activated');
+    }
+
+    if (user.isBlocked) {
+      throw new ForbiddenException('User is not blocked');
+    }
+
+    const passwordsEquals = await this.comparePasswords({
       plainPassword: password,
       hashedPassword: user.password,
     });
@@ -70,15 +91,35 @@ export class AuthService {
       { user },
     );
 
+    await this.SessionsService.addSession({
+      userId: user.id,
+      userIp,
+      refreshToken,
+      transaction,
+    });
+
     return { accessToken, refreshToken };
   }
 
-  private async notifyAfterRegister({
+  private pepperisePassword({ password }: IPepperisePasswordParams) {
+    const pepper = env.PASSWORD_PEPPER;
+    const pepperedPassword = String(password) + String(pepper);
+
+    if (password.length + pepper.length > MAX_USER_PASSWORD_LENGTH) {
+      return pepperedPassword.slice(0, MAX_USER_PASSWORD_LENGTH);
+    }
+
+    return pepperedPassword;
+  }
+
+  private notifyAfterRegister({
     username,
     email,
     activationToken,
   }: INotifyAfterRegisterParams) {
-    const activationLink = getUserActivationLink({ activationToken });
+    const activationLink = this.getUserActivationLink({
+      activationToken,
+    });
 
     return this.NodeMailerService.sendMail({
       to: email,
@@ -91,5 +132,21 @@ export class AuthService {
         </div>
       `,
     });
+  }
+
+  private getUserActivationLink({
+    activationToken,
+  }: IGetUserActivationLinkParams) {
+    return `${env.APP_PROTOCOL}://${env.APP_DOMAIN}:${env.APP_LOCAL_PORT}/auth/activate/${activationToken}`;
+  }
+
+  private comparePasswords({
+    plainPassword,
+    hashedPassword,
+  }: IComparePasswordsParams) {
+    return bcrypt.compare(
+      this.pepperisePassword({ password: plainPassword }),
+      hashedPassword,
+    );
   }
 }

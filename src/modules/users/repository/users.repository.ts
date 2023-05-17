@@ -21,12 +21,12 @@ export class UsersRepository {
   }
 
   /**
-   @If no parameters passed search will be executed with userId=0
+   @If no advancedOptions passed userId is required
    @advancedOptions overrides default configuration
    */
   getOneUser({ userId, advancedOptions }: IGetOneUserParams) {
     const defaultFindOptions: FindOptions<IUsersModelAttributes> = {
-      where: { id: userId || 0 },
+      where: { id: userId },
       include: [{ model: Roles, include: [{ model: Permissions }] }],
     };
     const findOptions = advancedOptions ? advancedOptions : defaultFindOptions;

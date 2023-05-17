@@ -14,3 +14,7 @@ interface IGenerateTokenParams {
 
 export type IGenerateAccessTokenParams = IGenerateTokenParams;
 export type IGenerateRefreshTokenParams = IGenerateTokenParams;
+
+export interface IGetTokenSignature {
+  token: string;
+}

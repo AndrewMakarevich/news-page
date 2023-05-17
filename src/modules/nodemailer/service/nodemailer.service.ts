@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { Inject, InternalServerErrorException } from '@nestjs/common';
 import { NODEMAILER_TRANSPORTER_PROVIDER_NAME } from '../nodemailer.const';
 import { Transporter, SendMailOptions } from 'nodemailer';
 
@@ -9,6 +9,10 @@ export class NodeMailerService {
   ) {}
 
   sendMail(options: SendMailOptions) {
-    this.nodemailerTransporter.sendMail(options);
+    return this.nodemailerTransporter.sendMail(options).catch((err) => {
+      throw new InternalServerErrorException(
+        `Can't send activation letter. Details: ${err.message}`,
+      );
+    });
   }
 }

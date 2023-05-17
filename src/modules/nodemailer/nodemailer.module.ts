@@ -15,7 +15,6 @@ export class NodeMailerModule {
       module: NodeMailerModule,
       global: true,
       providers: [
-        NodeMailerService,
         {
           provide: NODEMAILER_TRANSPORTER_PROVIDER_NAME,
           useFactory: async () => {

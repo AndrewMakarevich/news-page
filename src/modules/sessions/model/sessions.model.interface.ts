@@ -4,7 +4,7 @@ import { IDefaultModelAttributes } from 'src/db/models/models.interface';
 export interface ISessionsModelCreationAttributes {
   userId: string;
   ip: string;
-  refreshToken: string;
+  refreshTokenSignature: string;
 }
 
 export interface ISessionsModelAttributes

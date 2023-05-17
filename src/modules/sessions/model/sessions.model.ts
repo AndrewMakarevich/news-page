@@ -9,9 +9,16 @@ import {
 } from 'sequelize-typescript';
 import { Users } from 'src/db/models/models';
 import { UUIDV6_FUNCTION_NAME } from 'src/db/utils/returnUUIDV6PsqlFunction';
+import {
+  ISessionsModelAttributes,
+  ISessionsModelCreationAttributes,
+} from './sessions.model.interface';
 
 @Table
-export class Sessions extends Model {
+export class Sessions extends Model<
+  ISessionsModelAttributes,
+  ISessionsModelCreationAttributes
+> {
   @Column({
     type: DataType.UUID,
     defaultValue: Sequelize.fn(UUIDV6_FUNCTION_NAME),
@@ -21,7 +28,6 @@ export class Sessions extends Model {
 
   @Column({
     type: DataType.STRING(60),
-    allowNull: false,
   })
   ip: string;
 
@@ -29,7 +35,7 @@ export class Sessions extends Model {
     type: DataType.STRING(60),
     allowNull: false,
   })
-  refreshToken: string;
+  refreshTokenSignature: string;
 
   @ForeignKey(() => Users)
   @Column({ type: DataType.UUID })
