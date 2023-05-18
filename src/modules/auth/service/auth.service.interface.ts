@@ -1,4 +1,5 @@
 import { Transaction } from 'sequelize';
+import { ITokenPayload } from 'src/modules/tokens/service/tokens.service.interface';
 
 export interface IRegisterParams {
   username: string;
@@ -16,6 +17,13 @@ export interface ILoginParams {
   userIp: string;
   username: string;
   password: string;
+  transaction: Transaction;
+}
+
+export interface ILogoutParams {
+  accessToken: string;
+  accessTokenExp: number;
+  refreshToken: string;
   transaction: Transaction;
 }
 

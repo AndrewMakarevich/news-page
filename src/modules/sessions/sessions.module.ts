@@ -10,6 +10,6 @@ import { TokensModule } from '../tokens/tokens.module';
   imports: [SequelizeModule.forFeature([Sessions]), TokensModule],
   controllers: [SessionsController],
   providers: [SessionsService, SessionsRepository],
-  exports: [SessionsService],
+  exports: [SessionsService, SessionsRepository],
 })
 export class SessionsModule {}

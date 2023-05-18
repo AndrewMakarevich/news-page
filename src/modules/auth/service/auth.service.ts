@@ -16,12 +16,14 @@ import {
   IComparePasswordsParams,
   IGetUserActivationLinkParams,
   IPepperisePasswordParams,
+  ILogoutParams,
 } from './auth.service.interface';
 import { NodeMailerService as NodeMailerServiceClass } from 'src/modules/nodemailer/service/nodemailer.service';
 import { TokensService as TokensServiceClass } from 'src/modules/tokens/service/tokens.service';
 import { SessionsService as SessionsServiceClass } from 'src/modules/sessions/service/sessions.service';
 import { SessionsRepository as SessionsRepositoryClass } from 'src/modules/sessions/repository/sessions.repository';
 import { MAX_USER_PASSWORD_LENGTH } from 'src/modules/users/users.const';
+import { RedisRepository as RedisRepositoryClass } from 'src/modules/redis/repository/redis.repository';
 
 dotenv.config();
 
@@ -31,6 +33,7 @@ export class AuthService {
     private NodeMailerService: NodeMailerServiceClass,
     private TokensService: TokensServiceClass,
     private SessionsService: SessionsServiceClass,
+    private SessionsRepository: SessionsRepositoryClass,
     private UsersRepository: UsersRepositoryClass,
   ) {}
 
@@ -99,6 +102,36 @@ export class AuthService {
     });
 
     return { accessToken, refreshToken };
+  }
+
+  async logout({
+    accessToken,
+    accessTokenExp,
+    refreshToken,
+    transaction,
+  }: ILogoutParams) {
+    const refreshTokenSignature = this.TokensService.getTokenSignature({
+      token: refreshToken,
+    });
+
+    const session = await this.SessionsRepository.getOneSession({
+      advancedOptions: { where: { refreshTokenSignature } },
+    });
+
+    if (session) {
+      await this.SessionsRepository.deleteSessions({
+        sessionsIds: [session.id],
+        transaction,
+      });
+    }
+
+    const result = await this.TokensService.addAccessTokenToBlackList({
+      token: accessToken,
+      tokenExp: accessTokenExp,
+    });
+    console.log(result);
+
+    return { message: 'Logout successfully' };
   }
 
   private pepperisePassword({ password }: IPepperisePasswordParams) {

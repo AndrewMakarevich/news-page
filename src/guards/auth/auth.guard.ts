@@ -38,6 +38,8 @@ export class AuthGuard implements CanActivate {
       }
 
       request.user = user;
+      request.accessToken = accessToken;
+      request.accessTokenExp = accessTokenPayload.exp;
 
       return true;
     } catch (err) {

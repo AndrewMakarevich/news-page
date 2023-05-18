@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { REDIS_CLIENT_PROVIDER_NAME } from '../redis.const';
-import { RedisClientType } from '@redis/client';
+import { RedisClientType } from 'redis';
 
 @Injectable()
 export class RedisRepository {
@@ -8,11 +8,11 @@ export class RedisRepository {
     @Inject(REDIS_CLIENT_PROVIDER_NAME) private RedisClient: RedisClientType,
   ) {}
 
-  get(key: string) {
-    return this.RedisClient.GET(key);
+  GET(...params: Parameters<typeof this.RedisClient.GET>) {
+    return this.RedisClient.GET(...params);
   }
 
-  set(key: string, value: number | string) {
-    return this.RedisClient.SET(key, value);
+  SET(...params: Parameters<typeof this.RedisClient.SET>) {
+    return this.RedisClient.SET(...params);
   }
 }

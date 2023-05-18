@@ -1,9 +1,15 @@
+import { JwtPayload } from 'jsonwebtoken';
 import { Users } from 'src/db/models/models';
 
-export interface ITokenPayload {
+export interface ITokenPayload extends JwtPayload {
   id: string;
   username: string;
   roleId: string;
+}
+
+export interface IAddAccessTokenToBlackList {
+  token: string;
+  tokenExp: number;
 }
 
 export interface IGenerateTokensPairParams {
