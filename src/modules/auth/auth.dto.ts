@@ -1,7 +1,7 @@
-import { ActivationTokenConstraint } from 'src/decorators/constraints/users/activationTokenConstraint.decorator';
-import { EmailConstraint } from 'src/decorators/constraints/users/emailConstraint.decorator';
-import { PasswordConstraint } from 'src/decorators/constraints/users/passwordConstraint.decorator';
-import { UsernameConstraint } from 'src/decorators/constraints/users/usernameConstraint.decorator';
+import { ActivationTokenConstraint } from 'src/decorators/constraints/user/activationTokenConstraint.decorator';
+import { EmailConstraint } from 'src/decorators/constraints/user/emailConstraint.decorator';
+import { PasswordConstraint } from 'src/decorators/constraints/user/passwordConstraint.decorator';
+import { UsernameConstraint } from 'src/decorators/constraints/user/usernameConstraint.decorator';
 
 export class RegisterDto {
   @UsernameConstraint()

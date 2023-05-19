@@ -23,7 +23,6 @@ import { TokensService as TokensServiceClass } from 'src/modules/tokens/service/
 import { SessionsService as SessionsServiceClass } from 'src/modules/sessions/service/sessions.service';
 import { SessionsRepository as SessionsRepositoryClass } from 'src/modules/sessions/repository/sessions.repository';
 import { MAX_USER_PASSWORD_LENGTH } from 'src/modules/users/users.const';
-import { RedisRepository as RedisRepositoryClass } from 'src/modules/redis/repository/redis.repository';
 
 dotenv.config();
 

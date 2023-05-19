@@ -14,12 +14,12 @@ import { Response } from 'express';
 import { AuthService as AuthServiceClass } from '../service/auth.service';
 import { ActivateDto, LoginDto, RegisterDto } from '../auth.dto';
 import { REFRESH_TOKEN_COOKIE_NAME } from '../auth.const';
-import { AuthGuard } from 'src/guards/auth/auth.guard';
 import { ParseJWTPipe } from 'src/pipes/parseJWT/parseJWT.pipe';
 import { AccessToken } from 'src/decorators/param/request/accessToken/accessToken.decorator';
-import { AccessTokenExp } from 'src/decorators/param/request/accessTokenExp/accessTokenExp.decorator';
 import { UserIp } from 'src/decorators/param/request/userIp/userIp.decorator';
 import { Cookies } from 'src/decorators/param/request/cookies/cookies.decorator';
+import { AccessTokenGuard } from 'src/guards/accessToken/accessToken.guard';
+import { AccessTokenPayload } from 'src/decorators/param/request/accessTokenPayload/accessTokenPayload.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -96,25 +96,27 @@ export class AuthController {
     }
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AccessTokenGuard)
   @Delete('logout')
   async logout(
     @Cookies(REFRESH_TOKEN_COOKIE_NAME, new ParseJWTPipe('refresh'))
     refreshToken: string,
     @AccessToken(new ParseJWTPipe('access')) accessToken: string,
-    @AccessTokenExp(ParseIntPipe) accessTokenExp: number,
+    @AccessTokenPayload('exp', ParseIntPipe) accessTokenExp: number,
     @Res({ passthrough: true }) res: Response,
   ) {
     const transaction = await this.sequelize.transaction();
 
     try {
-      await this.AuthService.logout({
+      const logoutResult = await this.AuthService.logout({
         accessToken,
         accessTokenExp,
         refreshToken,
         transaction,
       });
       res.clearCookie(REFRESH_TOKEN_COOKIE_NAME);
+
+      return logoutResult;
     } catch (err) {
       await transaction.rollback();
 

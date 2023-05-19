@@ -23,6 +23,10 @@ interface IGenerateTokenParams {
 export type IGenerateAccessTokenParams = IGenerateTokenParams;
 export type IGenerateRefreshTokenParams = IGenerateTokenParams;
 
+export interface IGetTokenBlackListRedisKey {
+  token: string;
+}
+
 export interface IGetTokenSignature {
   token: string;
 }
@@ -38,5 +42,9 @@ export interface IVerifyAccessTokenParams {
 }
 
 export interface IVerifyRefreshTokenParams {
+  token: string;
+}
+
+export interface IDecodeTokenParams {
   token: string;
 }

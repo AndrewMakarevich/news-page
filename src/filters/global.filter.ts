@@ -3,12 +3,15 @@ import {
   HttpException,
   HttpStatus,
   Catch,
+  Logger,
 } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
 import { ValidationErrorItem } from 'sequelize';
 
 @Catch()
 export class GlobalFilter extends BaseExceptionFilter {
+  private readonly globalFilterLogger = new Logger('GlobalExceptionsHandler');
+
   catch(exception: any, host: ArgumentsHost) {
     if (!(exception instanceof HttpException)) {
       const exceptionStack = (exception as Error).stack;
@@ -27,8 +30,9 @@ export class GlobalFilter extends BaseExceptionFilter {
       );
 
       (exception as HttpException).stack = exceptionStack;
-      console.log(exception);
     }
+
+    this.globalFilterLogger.error(exception.message, exception.stack);
 
     super.catch(exception, host);
   }

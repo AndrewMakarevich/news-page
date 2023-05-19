@@ -1,11 +1,13 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { sign, verify } from 'jsonwebtoken';
+import { sign, decode, verify } from 'jsonwebtoken';
 import { env } from 'process';
 import {
   IAddAccessTokenToBlackList,
+  IDecodeTokenParams,
   IGenerateAccessTokenParams,
   IGenerateRefreshTokenParams,
   IGenerateTokensPairParams,
+  IGetTokenBlackListRedisKey,
   IGetTokenSignature,
   ITokenPayload,
   IVerifyAccessTokenParams,
@@ -13,6 +15,10 @@ import {
   IVerifyTokenParams,
 } from './tokens.service.interface';
 import { RedisRepository as RedisRepositoryClass } from 'src/modules/redis/repository/redis.repository';
+import {
+  ACCESS_TOKEN_EXPIRES_IN_SECONDS,
+  REFRESH_TOKEN_EXPIRES_IN_SECONDS,
+} from '../tokens.const';
 
 @Injectable()
 export class TokensService {
@@ -22,7 +28,13 @@ export class TokensService {
     token,
     tokenExp,
   }: IAddAccessTokenToBlackList) {
-    let tokenTtl = Date.now() - tokenExp;
+    try {
+      await this.verifyAccessToken({ token });
+    } catch (err) {
+      return;
+    }
+
+    let tokenTtl = tokenExp - Math.ceil(Date.now() / 1000);
 
     if (tokenTtl <= 0) {
       return;
@@ -32,11 +44,50 @@ export class TokensService {
       tokenTtl = ACCESS_TOKEN_EXPIRES_IN_SECONDS;
     }
 
-    const tokenSignature = this.getTokenSignature({ token });
+    const tokenBlackListKey = this.getTokenBlackListRedisKey({ token });
 
-    return this.RedisRepository.SET(`bl_${tokenSignature}`, '', {
+    return this.RedisRepository.SET(tokenBlackListKey, '', {
       EX: tokenTtl,
     });
+  }
+
+  async verifyAccessToken({ token }: IVerifyAccessTokenParams) {
+    const tokenBlackListKey = this.getTokenBlackListRedisKey({ token });
+    const blackListedToken = await this.RedisRepository.GET(tokenBlackListKey);
+
+    if (blackListedToken === '') {
+      throw new UnauthorizedException('Token added to the black list');
+    }
+
+    return this.verifyToken({
+      token,
+      secret: env.ACCESS_TOKEN_SECRET_KEY,
+      errorMessage: 'Incorrect access token',
+    });
+  }
+
+  verifyRefreshToken({ token }: IVerifyRefreshTokenParams) {
+    return this.verifyToken({
+      token,
+      secret: env.REFRESH_TOKEN_SECRET_KEY,
+      errorMessage: 'Incorrect refresh token',
+    });
+  }
+
+  decodeToken({ token }: IDecodeTokenParams) {
+    try {
+      return decode(token) as ITokenPayload;
+    } catch (err) {
+      throw new UnauthorizedException(
+        `Error appeared while decoding token payload. Details: ${err?.message}`,
+      );
+    }
+  }
+
+  getTokenBlackListRedisKey({ token }: IGetTokenBlackListRedisKey) {
+    const tokenSignature = this.getTokenSignature({ token });
+
+    return `bl_${tokenSignature}`;
   }
 
   generateTokensPair({ user }: IGenerateTokensPairParams) {
@@ -66,7 +117,11 @@ export class TokensService {
     return token.split('.')[2];
   }
 
-  private verifyToken({ token, secret, errorMessage }: IVerifyTokenParams) {
+  private async verifyToken({
+    token,
+    secret,
+    errorMessage,
+  }: IVerifyTokenParams) {
     try {
       return verify(token, secret) as ITokenPayload;
     } catch (err) {
@@ -74,21 +129,5 @@ export class TokensService {
         `${errorMessage}. Details: ${err?.message}`,
       );
     }
-  }
-
-  verifyAccessToken({ token }: IVerifyAccessTokenParams) {
-    return this.verifyToken({
-      token,
-      secret: env.ACCESS_TOKEN_SECRET_KEY,
-      errorMessage: 'Incorrect access token',
-    });
-  }
-
-  verifyRefreshToken({ token }: IVerifyRefreshTokenParams) {
-    return this.verifyToken({
-      token,
-      secret: env.REFRESH_TOKEN_SECRET_KEY,
-      errorMessage: 'Incorrect refresh token',
-    });
   }
 }
