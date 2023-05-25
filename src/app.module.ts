@@ -79,13 +79,13 @@ const sequelizeConfig = dbConfig[env.NODE_ENV || 'development'];
       name: env.REDIS_NAME,
       socket: {
         host: env.REDIS_CONTAINER_NAME,
-        port: +env.REDIS_INTERNAL_PORT || 6379,
+        port: Number(env.REDIS_INTERNAL_PORT) || 6379,
       },
     }),
     NodeMailerModule.forRoot({
       transport: {
         host: env.NODEMAILER_HOST,
-        port: +env.NODEMAILER_PORT || 465,
+        port: Number(env.NODEMAILER_PORT) || 465,
         auth: {
           user: env.NODEMAILER_USER,
           pass: env.NODEMAILER_PASSWORD,

@@ -14,13 +14,16 @@ export class ValidationErrorFilter
     const errorsMessagesToReturn: Array<string> = [];
 
     exception.getData().forEach((validationError) => {
-      Object.keys(validationError.constraints).forEach((constraintKey) => {
-        const constraintMessage = validationError.constraints[constraintKey];
+      Object.keys(validationError.constraints || []).forEach(
+        (constraintKey) => {
+          const constraintMessage =
+            validationError.constraints?.[constraintKey];
 
-        if (constraintMessage !== undefined) {
-          errorsMessagesToReturn.push(constraintMessage);
-        }
-      });
+          if (constraintMessage) {
+            errorsMessagesToReturn.push(constraintMessage);
+          }
+        },
+      );
     });
 
     return response.status(statusCode).json({

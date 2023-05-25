@@ -2,11 +2,12 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { sign, decode, verify } from 'jsonwebtoken';
 import { env } from 'process';
 import {
-  IAddAccessTokenToBlackList,
+  IAddAccessTokenToBlackListParams,
   IDecodeTokenParams,
   IGenerateAccessTokenParams,
   IGenerateRefreshTokenParams,
   IGenerateTokensPairParams,
+  IGetAccessTokenFromBlackListParams,
   IGetTokenBlackListRedisKey,
   IGetTokenSignature,
   ITokenPayload,
@@ -27,7 +28,7 @@ export class TokensService {
   async addAccessTokenToBlackList({
     token,
     tokenExp,
-  }: IAddAccessTokenToBlackList) {
+  }: IAddAccessTokenToBlackListParams) {
     try {
       await this.verifyAccessToken({ token });
     } catch (err) {
@@ -51,9 +52,16 @@ export class TokensService {
     });
   }
 
-  async verifyAccessToken({ token }: IVerifyAccessTokenParams) {
+  async getAccessTokenFromBlacklist({
+    token,
+  }: IGetAccessTokenFromBlackListParams) {
     const tokenBlackListKey = this.getTokenBlackListRedisKey({ token });
-    const blackListedToken = await this.RedisRepository.GET(tokenBlackListKey);
+
+    return this.RedisRepository.GET(tokenBlackListKey);
+  }
+
+  async verifyAccessToken({ token }: IVerifyAccessTokenParams) {
+    const blackListedToken = await this.getAccessTokenFromBlacklist({ token });
 
     if (blackListedToken === '') {
       throw new UnauthorizedException('Token added to the black list');
@@ -61,7 +69,7 @@ export class TokensService {
 
     return this.verifyToken({
       token,
-      secret: env.ACCESS_TOKEN_SECRET_KEY,
+      secret: env.ACCESS_TOKEN_SECRET_KEY!,
       errorMessage: 'Incorrect access token',
     });
   }
@@ -69,7 +77,7 @@ export class TokensService {
   verifyRefreshToken({ token }: IVerifyRefreshTokenParams) {
     return this.verifyToken({
       token,
-      secret: env.REFRESH_TOKEN_SECRET_KEY,
+      secret: env.REFRESH_TOKEN_SECRET_KEY!,
       errorMessage: 'Incorrect refresh token',
     });
   }
@@ -100,7 +108,7 @@ export class TokensService {
   generateAccessToken({ payload }: IGenerateAccessTokenParams) {
     const { id, username, roleId } = payload;
 
-    return sign({ id, username, roleId }, env.ACCESS_TOKEN_SECRET_KEY, {
+    return sign({ id, username, roleId }, env.ACCESS_TOKEN_SECRET_KEY!, {
       expiresIn: `${ACCESS_TOKEN_EXPIRES_IN_SECONDS}s`,
     });
   }
@@ -108,7 +116,7 @@ export class TokensService {
   generateRefreshToken({ payload }: IGenerateRefreshTokenParams) {
     const { id, username, roleId } = payload;
 
-    return sign({ id, username, roleId }, env.REFRESH_TOKEN_SECRET_KEY, {
+    return sign({ id, username, roleId }, env.REFRESH_TOKEN_SECRET_KEY!, {
       expiresIn: `${REFRESH_TOKEN_EXPIRES_IN_SECONDS}s`,
     });
   }

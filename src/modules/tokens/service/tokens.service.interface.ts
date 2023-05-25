@@ -7,9 +7,13 @@ export interface ITokenPayload extends JwtPayload {
   roleId: string;
 }
 
-export interface IAddAccessTokenToBlackList {
+export interface IAddAccessTokenToBlackListParams {
   token: string;
   tokenExp: number;
+}
+
+export interface IGetAccessTokenFromBlackListParams {
+  token: string;
 }
 
 export interface IGenerateTokensPairParams {

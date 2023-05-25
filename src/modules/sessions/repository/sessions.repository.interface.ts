@@ -6,7 +6,7 @@ import {
 
 export interface IAddSessionParams {
   userId: string;
-  userIp: string;
+  userIp: string | null;
   refreshTokenSignature: string;
   transaction: Transaction;
 }

@@ -6,6 +6,6 @@ export const AccessTokenPayload = createParamDecorator(
   (key: keyof ITokenPayload, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest<Request>();
 
-    return key ? request.accessTokenPayload[key] : request.accessTokenPayload;
+    return key ? request.accessTokenPayload?.[key] : request.accessTokenPayload;
   },
 );

@@ -8,7 +8,7 @@ dotenv.config();
 const common: SequelizeModuleOptions = {
   database: env.DB_NAME,
   host: env.DB_CONTAINER_NAME,
-  port: +env.DB_INTERNAL_PORT || 5432,
+  port: Number(env.DB_INTERNAL_PORT) || 5432,
   username: env.DB_USER,
   password: env.DB_PASSWORD,
   dialect: env.DB_DIALECT as Dialect,

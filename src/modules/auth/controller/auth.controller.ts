@@ -116,6 +116,8 @@ export class AuthController {
       });
       res.clearCookie(REFRESH_TOKEN_COOKIE_NAME);
 
+      await transaction.commit();
+
       return logoutResult;
     } catch (err) {
       await transaction.rollback();

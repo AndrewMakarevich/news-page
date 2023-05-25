@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { env } from 'process';
 import * as bcrypt from 'bcrypt';
 import * as dotenv from 'dotenv';
@@ -22,6 +18,7 @@ import { NodeMailerService as NodeMailerServiceClass } from 'src/modules/nodemai
 import { TokensService as TokensServiceClass } from 'src/modules/tokens/service/tokens.service';
 import { SessionsService as SessionsServiceClass } from 'src/modules/sessions/service/sessions.service';
 import { SessionsRepository as SessionsRepositoryClass } from 'src/modules/sessions/repository/sessions.repository';
+import { UsersService as UsersServiceClass } from 'src/modules/users/service/users.service';
 import { MAX_USER_PASSWORD_LENGTH } from 'src/modules/users/users.const';
 
 dotenv.config();
@@ -33,6 +30,7 @@ export class AuthService {
     private TokensService: TokensServiceClass,
     private SessionsService: SessionsServiceClass,
     private SessionsRepository: SessionsRepositoryClass,
+    private UsersService: UsersServiceClass,
     private UsersRepository: UsersRepositoryClass,
   ) {}
 
@@ -68,37 +66,27 @@ export class AuthService {
       advancedOptions: { where: { username } },
     });
 
-    if (!user) {
-      throw new BadRequestException("User with such username doesn't exists");
-    }
-
-    if (!user.isActivated) {
-      throw new ForbiddenException('User is not activated');
-    }
-
-    if (user.isBlocked) {
-      throw new ForbiddenException('User is not blocked');
-    }
+    const healthCheckedUser = this.UsersService.checkUserHealth({
+      user,
+      errorMessages: { userIsNull: "User with such username doesn't exists" },
+    });
 
     const passwordsEquals = await this.comparePasswords({
       plainPassword: password,
-      hashedPassword: user.password,
+      hashedPassword: healthCheckedUser.password,
     });
 
     if (!passwordsEquals) {
       throw new BadRequestException('Incorrect password');
     }
 
-    const { accessToken, refreshToken } = this.TokensService.generateTokensPair(
-      { user },
+    const { accessToken, refreshToken } = await this.SessionsService.addSession(
+      {
+        userId: healthCheckedUser.id,
+        userIp,
+        transaction,
+      },
     );
-
-    await this.SessionsService.addSession({
-      userId: user.id,
-      userIp,
-      refreshToken,
-      transaction,
-    });
 
     return { accessToken, refreshToken };
   }
@@ -124,17 +112,16 @@ export class AuthService {
       });
     }
 
-    const result = await this.TokensService.addAccessTokenToBlackList({
+    await this.TokensService.addAccessTokenToBlackList({
       token: accessToken,
       tokenExp: accessTokenExp,
     });
-    console.log(result);
 
     return { message: 'Logout successfully' };
   }
 
   private pepperisePassword({ password }: IPepperisePasswordParams) {
-    const pepper = env.PASSWORD_PEPPER;
+    const pepper = env.PASSWORD_PEPPER!;
     const pepperedPassword = String(password) + String(pepper);
 
     if (password.length + pepper.length > MAX_USER_PASSWORD_LENGTH) {

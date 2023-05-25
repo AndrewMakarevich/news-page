@@ -42,6 +42,8 @@ export function MinMaxConstraint({
         if (validationArguments.value?.length) {
           return getLengthValidationMsg(entityName, max, 'max');
         }
+
+        return '';
       },
     }),
   );

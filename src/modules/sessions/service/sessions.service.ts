@@ -2,57 +2,107 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { SessionsRepository as SessionsRepositoryClass } from '../repository/sessions.repository';
 import {
-  IAddSession,
-  IDeleteExtraSessions,
-  IEditSessionParams,
-  IUpdateOrAddSession,
+  IAddOrRefreshSessionParams,
+  IAddSessionParams,
+  IDeleteExtraSessionsParams,
+  IGetUserCanHaveSession,
+  IRefreshSessionParams,
 } from './sessions.service.interface';
 import { TokensService as TokensServiceClass } from 'src/modules/tokens/service/tokens.service';
 import { MAX_SESSIONS_AMOUNT } from '../sessions.const';
+import { UsersRepository as UsersRepositoryClass } from 'src/modules/users/repository/users.repository';
+import { UsersService as UsersServiceClass } from 'src/modules/users/service/users.service';
 
 @Injectable()
 export class SessionsService {
   constructor(
     private TokensService: TokensServiceClass,
+    private UsersService: UsersServiceClass,
+    private UsersRepository: UsersRepositoryClass,
     private SessionsRepository: SessionsRepositoryClass,
   ) {}
 
-  async addSession({ userId, userIp, refreshToken, transaction }: IAddSession) {
+  async addOrRefreshSession({
+    userId,
+    userIp,
+    currentRefreshToken,
+    transaction,
+  }: IAddOrRefreshSessionParams) {
+    let { accessToken, refreshToken } =
+      (await this.refreshSession({
+        userId,
+        userIp,
+        currentRefreshToken,
+        transaction,
+      })) || {};
+
+    if (!accessToken || !refreshToken) {
+      ({ accessToken, refreshToken } = await this.addSession({
+        userId,
+        userIp,
+        transaction,
+      }));
+    }
+
+    return { accessToken, refreshToken };
+  }
+
+  async addSession({ userId, userIp, transaction }: IAddSessionParams) {
+    const user = await this.checkUserCanHaveSession({
+      userId,
+      sessionInteractionType: 'create',
+    });
+
     await this.deleteExtraSessions({ userId, reserve: 1, transaction });
 
+    const { accessToken, refreshToken } = this.TokensService.generateTokensPair(
+      { user },
+    );
     const refreshTokenSignature = this.TokensService.getTokenSignature({
       token: refreshToken,
     });
-    const hashedUserIp = await bcrypt.hash(userIp, 12);
+    const hashedUserIp = userIp ? await bcrypt.hash(userIp, 12) : userIp;
 
-    return this.SessionsRepository.addSession({
+    await this.SessionsRepository.addSession({
       userId,
       userIp: hashedUserIp,
       refreshTokenSignature,
       transaction,
     });
+
+    return { accessToken, refreshToken };
   }
 
   async refreshSession({
     userId,
     userIp,
-    refreshToken,
+    currentRefreshToken,
     transaction,
-  }: IUpdateOrAddSession) {
-    const refreshTokenSignature = this.TokensService.getTokenSignature({
-      token: refreshToken,
+  }: IRefreshSessionParams) {
+    const user = await this.checkUserCanHaveSession({
+      userId,
+      sessionInteractionType: 'refresh',
     });
 
+    const currentRefreshTokenSignature = this.TokensService.getTokenSignature({
+      token: currentRefreshToken,
+    });
     const session = await this.SessionsRepository.getOneSession({
       advancedOptions: {
-        where: { refreshTokenSignature },
+        where: { refreshTokenSignature: currentRefreshTokenSignature },
       },
     });
 
-    const ipsEquals = await bcrypt.compare(userIp, session.ip);
+    if (!session) {
+      return null;
+    }
+
+    const ipsEquals = userIp
+      ? await bcrypt.compare(userIp, session.ip)
+      : userIp;
     const usersIdsEquals = userId === session.userId;
 
-    if (!ipsEquals && usersIdsEquals) {
+    if (!ipsEquals || usersIdsEquals) {
       await this.SessionsRepository.deleteSessions({
         sessionsIds: [session.id],
         transaction,
@@ -63,41 +113,39 @@ export class SessionsService {
       );
     }
 
-    return await this.SessionsRepository.editSession({
+    const { accessToken, refreshToken } = this.TokensService.generateTokensPair(
+      { user },
+    );
+    const newRefreshTokenSignature = this.TokensService.getTokenSignature({
+      token: currentRefreshToken,
+    });
+
+    await this.SessionsRepository.editSession({
       sessionId: session.id,
-      refreshTokenSignature,
+      refreshTokenSignature: newRefreshTokenSignature,
       transaction,
     });
-  }
 
-  async editSession({
-    sessionId,
-    refreshToken,
-    transaction,
-  }: IEditSessionParams) {
-    const refreshTokenSignature = this.TokensService.getTokenSignature({
-      token: refreshToken,
-    });
-
-    return this.SessionsRepository.editSession({
-      sessionId,
-      refreshTokenSignature,
-      transaction,
-    });
+    return { accessToken, refreshToken };
   }
 
   async deleteExtraSessions({
     userId,
     reserve = 0,
     transaction,
-  }: IDeleteExtraSessions) {
+  }: IDeleteExtraSessionsParams) {
     const activeSessions = await this.SessionsRepository.getSessions({
       userId,
     });
 
+    if (!activeSessions || activeSessions.length === 0) {
+      return;
+    }
+
     if (activeSessions.length >= MAX_SESSIONS_AMOUNT) {
-      const sessionsAmountToDelete =
-        MAX_SESSIONS_AMOUNT - activeSessions.length + reserve;
+      const sessionsAmountToDelete = Math.abs(
+        MAX_SESSIONS_AMOUNT - activeSessions.length + reserve,
+      );
 
       const sessionsIdsToDelete: string[] = [];
 
@@ -105,10 +153,28 @@ export class SessionsService {
         sessionsIdsToDelete.push(activeSessions[i].id);
       }
 
-      await this.SessionsRepository.deleteSessions({
+      return this.SessionsRepository.deleteSessions({
         sessionsIds: sessionsIdsToDelete,
         transaction,
       });
     }
+  }
+
+  async checkUserCanHaveSession({
+    userId,
+    sessionInteractionType,
+  }: IGetUserCanHaveSession) {
+    const user = await this.UsersRepository.getOneUser({ userId });
+
+    const healthCheckedUser = this.UsersService.checkUserHealth({
+      user,
+      errorMessages: {
+        userIsNull: `You tried to ${sessionInteractionType} session for an unregistered user.`,
+        userIsNotActivated: `You can't ${sessionInteractionType} session as user isn't activated yet.`,
+        userIsBlocked: `You can't ${sessionInteractionType} session as user is blocked.`,
+      },
+    });
+
+    return healthCheckedUser;
   }
 }

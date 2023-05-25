@@ -3,7 +3,7 @@ import { IDefaultModelAttributes } from 'src/db/models/models.interface';
 
 export interface ISessionsModelCreationAttributes {
   userId: string;
-  ip: string;
+  ip: string | null;
   refreshTokenSignature: string;
 }
 

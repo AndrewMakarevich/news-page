@@ -27,6 +27,6 @@ async function bootstrap() {
     new ValidationErrorFilter(),
   );
 
-  await app.listen(env.APP_INTERNAL_PORT);
+  await app.listen(env.APP_INTERNAL_PORT || 3001);
 }
 bootstrap();
