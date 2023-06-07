@@ -1,15 +1,15 @@
 import { QueryInterface } from 'sequelize';
-import { returnDropPostgresFunctionQuery } from 'src/db/utils/returnDropPostgresFunctionQuery';
 import {
   UUIDV6_FUNCTION_NAME,
-  returnUUIDV6PsqlFunction,
-} from 'src/db/utils/returnUUIDV6PsqlFunction';
+  getCreateUUIDV6PsqlFunctionQuery,
+} from 'src/db/utils/getCreateUUIDV6PsqlFunctionQuery';
+import { getDropPsqlFunctionQuery } from 'src/db/utils/getDropPsqlFunctionQuery';
 
 export default {
   up: async (queryInterface: QueryInterface) => {
     const transaction = await queryInterface.sequelize.transaction();
     try {
-      const uuidv6PsqlFunction = returnUUIDV6PsqlFunction();
+      const uuidv6PsqlFunction = getCreateUUIDV6PsqlFunctionQuery();
       await queryInterface.sequelize.query(uuidv6PsqlFunction, { transaction });
 
       await transaction.commit();
@@ -23,7 +23,7 @@ export default {
     const transaction = await queryInterface.sequelize.transaction();
 
     try {
-      const dropUUIDV6FunctionQuery = returnDropPostgresFunctionQuery({
+      const dropUUIDV6FunctionQuery = getDropPsqlFunctionQuery({
         functions: [{ name: UUIDV6_FUNCTION_NAME }],
       });
 

@@ -8,7 +8,7 @@ interface IDropPostgresFunctionParams {
   cascade?: boolean;
 }
 
-export const returnDropPostgresFunctionQuery = ({
+export const getDropPsqlFunctionQuery = ({
   functions,
   cascade,
 }: IDropPostgresFunctionParams) => {

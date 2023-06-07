@@ -35,7 +35,6 @@ export class AuthService {
   ) {}
 
   async register({ username, email, password, transaction }: IRegisterParams) {
-    console.log(bcrypt);
     const hashedPassword = await bcrypt.hash(
       this.pepperisePassword({ password }),
       12,

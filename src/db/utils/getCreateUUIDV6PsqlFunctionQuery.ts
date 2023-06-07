@@ -1,6 +1,6 @@
 export const UUIDV6_FUNCTION_NAME = 'fn_uuid_time_ordered';
 
-export const returnUUIDV6PsqlFunction = (): string => {
+export const getCreateUUIDV6PsqlFunctionQuery = (): string => {
   const psqlFunction = `
     create or replace function ${UUIDV6_FUNCTION_NAME}() returns uuid as $$
         declare
