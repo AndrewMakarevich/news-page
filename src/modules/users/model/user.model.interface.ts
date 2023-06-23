@@ -6,7 +6,7 @@ export interface IUsersModelCreationAttributes {
   username: string;
   email: string;
   password: string;
-  roleId: string;
+  roleId?: string;
 }
 
 export interface IUsersModelAttributes

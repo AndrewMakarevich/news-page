@@ -4,12 +4,11 @@ import {
   DataType,
   ForeignKey,
   HasMany,
-  HasOne,
   Model,
   Sequelize,
   Table,
 } from 'sequelize-typescript';
-import { UUIDV6_FUNCTION_NAME } from 'src/db/utils/returnUUIDV6PsqlFunction';
+import { UUIDV6_FUNCTION_NAME } from 'src/db/utils/getCreateUUIDV6PsqlFunctionQuery';
 import {
   IUsersModelAttributes,
   IUsersModelCreationAttributes,

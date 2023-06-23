@@ -7,7 +7,7 @@ import {
   Sequelize,
   Table,
 } from 'sequelize-typescript';
-import { UUIDV6_FUNCTION_NAME } from 'src/db/utils/returnUUIDV6PsqlFunction';
+import { UUIDV6_FUNCTION_NAME } from 'src/db/utils/getCreateUUIDV6PsqlFunctionQuery';
 import { MAX_ROLE_NAME_LENGTH, MIN_ROLE_NAME_LENGTH } from '../roles.const';
 import {
   IRolesModelAttributes,
