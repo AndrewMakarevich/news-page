@@ -16,23 +16,21 @@ export class UsersService {
 
   checkUserHealth({ user, errorMessages }: ICheckUserHealthParams) {
     const {
-      userIsNull: userIsNullMessage,
-      userIsNotActivated: userIsNotActivatedMessage,
-      userIsBlocked: userIsBlockedMessage,
+      userIsNull: userIsNullMessage = "User doesn't exists",
+      userIsNotActivated: userIsNotActivatedMessage = 'User not activated',
+      userIsBlocked: userIsBlockedMessage = 'User blocked',
     } = errorMessages || {};
 
     if (!user) {
-      throw new BadRequestException(userIsNullMessage || "User doesn't exists");
+      throw new BadRequestException(userIsNullMessage);
     }
 
     if (!user.isActivated) {
-      throw new BadRequestException(
-        userIsNotActivatedMessage || 'User not activated',
-      );
+      throw new BadRequestException(userIsNotActivatedMessage);
     }
 
     if (user.isBlocked) {
-      throw new BadRequestException(userIsBlockedMessage || 'User blocked');
+      throw new BadRequestException(userIsBlockedMessage);
     }
 
     return user;

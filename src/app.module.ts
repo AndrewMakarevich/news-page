@@ -17,6 +17,7 @@ import {
   PostsCollections,
   Sessions,
   Images,
+  Rules,
 } from './db/models/models';
 import { RolesModule } from './modules/roles/roles.module';
 import { PermissionsModule } from './modules/permissions/permissions.module';
@@ -72,6 +73,7 @@ const sequelizeConfig = dbConfig[env.NODE_ENV || 'development'];
         PostsCollections,
         Sessions,
         Images,
+        Rules,
       ],
       logging: console.log,
     }),

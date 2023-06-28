@@ -1,10 +1,10 @@
-interface functionObj {
+interface IFunctionObj {
   name: string;
   args?: string[];
 }
 
 interface IDropPostgresFunctionParams {
-  functions: functionObj[];
+  functions: IFunctionObj[];
   cascade?: boolean;
 }
 
@@ -16,8 +16,8 @@ export const getDropPsqlFunctionQuery = ({
     return `${name}${args ? `(${args.join(',')})` : ''}`;
   });
 
-  const dropQuery = `drop function if exists ${parsedFunctions.join(',')} ${
-    cascade ? 'cascade' : ''
+  const dropQuery = `DROP FUNCTION IF EXISTS ${parsedFunctions.join(',')} ${
+    cascade ? 'CASCADE' : ''
   };`;
 
   return dropQuery;

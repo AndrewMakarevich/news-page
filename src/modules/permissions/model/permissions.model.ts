@@ -6,7 +6,7 @@ import {
   Sequelize,
   Table,
 } from 'sequelize-typescript';
-import { UUIDV6_FUNCTION_NAME } from 'src/db/utils/getCreateUUIDV6PsqlFunctionQuery';
+import { UUIDV6_FUNCTION_NAME } from 'src/db/utils/common/getCreateUUIDV6PsqlFunctionQuery';
 import {
   MAX_PERMISSION_NAME_LENGTH,
   MIN_PERMISSION_NAME_LENGTH,

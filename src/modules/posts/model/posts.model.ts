@@ -10,7 +10,7 @@ import {
   BelongsToMany,
   HasMany,
 } from 'sequelize-typescript';
-import { UUIDV6_FUNCTION_NAME } from 'src/db/utils/getCreateUUIDV6PsqlFunctionQuery';
+import { UUIDV6_FUNCTION_NAME } from 'src/db/utils/common/getCreateUUIDV6PsqlFunctionQuery';
 import { MAX_POST_HEADER_LENGTH, MIN_POST_HEADER_LENGTH } from '../posts.const';
 import {
   Collections,

@@ -8,7 +8,7 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { Users } from 'src/db/models/models';
-import { UUIDV6_FUNCTION_NAME } from 'src/db/utils/getCreateUUIDV6PsqlFunctionQuery';
+import { UUIDV6_FUNCTION_NAME } from 'src/db/utils/common/getCreateUUIDV6PsqlFunctionQuery';
 import {
   ISessionsModelAttributes,
   ISessionsModelCreationAttributes,
