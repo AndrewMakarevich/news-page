@@ -9,7 +9,7 @@ export const getDropPsqlTriggerQuery = ({
   tableName,
   cascade,
 }: IGetDropPsqlTriggerQuery) => {
-  return `DROP IF EXISTS TRIGGER ${name} ON ${tableName} ${
+  return `DROP TRIGGER IF EXISTS ${name} ON ${tableName} ${
     cascade ? 'CASCADE' : ''
   };`;
 };
