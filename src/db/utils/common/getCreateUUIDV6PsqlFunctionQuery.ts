@@ -1,9 +1,9 @@
-import { getCreatePsqlFunctionQuery } from './getCreatePsqlFunctionQuery/getCreatePsqlFunctionQuery';
+import { FunctionQueryBuilderHelper } from 'src/db/helpers/functionQueryBuilderHelper/functionQueryBuilderHelper';
 
 export const UUIDV6_FUNCTION_NAME = 'fn_uuid_time_ordered';
 
 export const getCreateUUIDV6PsqlFunctionQuery = (): string => {
-  return getCreatePsqlFunctionQuery({
+  return FunctionQueryBuilderHelper.createFunction({
     name: UUIDV6_FUNCTION_NAME,
     returnType: 'uuid',
     language: 'plpgsql',

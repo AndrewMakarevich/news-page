@@ -1,7 +1,5 @@
 import { QueryInterface } from 'sequelize';
-import { Rules } from 'src/db/models/models';
-import { getDropPsqlFunctionQuery } from 'src/db/utils/common/getDropPsqlFunctionQuery';
-import { getDropPsqlTriggerQuery } from 'src/db/utils/common/getDropPsqlTriggerQuery';
+import { FunctionQueryBuilderHelper } from 'src/db/helpers/functionQueryBuilderHelper/functionQueryBuilderHelper';
 import {
   RULES_BEFORE_UPDATE_OR_CREATE_TRIGGER_FUNCTION_NAME,
   getCreateRulesBeforeUpdateOrCreateTriggerFunctionQuery,
@@ -38,7 +36,7 @@ export default {
 
     try {
       const dropBeforeUpdateOrCreateTriggerFunctionQuery =
-        getDropPsqlFunctionQuery({
+        FunctionQueryBuilderHelper.dropFunction({
           functions: [
             { name: RULES_BEFORE_UPDATE_OR_CREATE_TRIGGER_FUNCTION_NAME },
           ],

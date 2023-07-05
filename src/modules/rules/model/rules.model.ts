@@ -27,7 +27,7 @@ export class Rules extends Model {
     type: DataType.STRING,
     allowNull: false,
   })
-  field: string;
+  column: string;
 
   @Column({
     type: RULE_OPERATORS_TYPE_NAME,

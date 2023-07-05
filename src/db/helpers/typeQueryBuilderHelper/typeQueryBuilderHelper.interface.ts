@@ -1,4 +1,4 @@
-import { psqlCreateTypeForms } from './getCreatePsqlTypeQuery';
+import { psqlCreateTypeForms } from './typeQueryBuilderHelper.const';
 
 interface ICompositeTypeValues {
   attributeName: string;
@@ -33,3 +33,8 @@ export type IGetCreatePsqlTypeQuery =
   | IGetCreatePsqlCompositeTypeQuery
   | IGetCreatePsqlEnumTypeQuery
   | IGetCreatePsqlRangeTypeQuery;
+
+export interface IGetDropPsqlTypeQuery {
+  name: string;
+  cascade?: boolean;
+}

@@ -1,4 +1,4 @@
-import { psqlFunctionParameterMode } from './getCreatePsqlFunctionQuery';
+import { psqlFunctionParameterMode } from './functionQueryBuilderHelper.const';
 
 interface IPsqlFunctionBaseParameter {
   mode?:
@@ -10,7 +10,7 @@ interface IPsqlFunctionBaseParameter {
   defaultValue?: string;
 }
 
-interface IPsqlFunctionINParameter {
+interface IPsqlFunctionOUTParameter {
   mode: psqlFunctionParameterMode.OUT;
   name?: string;
   type: string;
@@ -19,7 +19,7 @@ interface IPsqlFunctionINParameter {
 
 type IPsqlFunctionParameter =
   | IPsqlFunctionBaseParameter
-  | IPsqlFunctionINParameter;
+  | IPsqlFunctionOUTParameter;
 
 export type IPsqlFunctionTableReturnType = {
   columnName: string;
@@ -39,4 +39,14 @@ export interface IGetCreatePsqlFunctionQuery {
     | IPsqlFunctionSetOfReturnType;
   logic: string;
   language: string;
+}
+
+interface IFunctionObj {
+  name: string;
+  args?: string[];
+}
+
+export interface IDropPsqlFunctionParams {
+  functions: IFunctionObj[];
+  cascade?: boolean;
 }

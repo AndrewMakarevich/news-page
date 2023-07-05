@@ -1,9 +1,6 @@
 import { QueryInterface } from 'sequelize';
-import {
-  psqlCreateTypeForms,
-  getCreatePsqlTypeQuery,
-} from 'src/db/utils/common/getCreatePsqlTypeQuery/getCreatePsqlTypeQuery';
-import { getDropPsqlTypeQuery } from 'src/db/utils/common/getDropPsqlTypeQuery';
+import { TypeQueryBuilderHelper } from 'src/db/helpers/typeQueryBuilderHelper/typeQueryBuilderHelper';
+import { psqlCreateTypeForms } from 'src/db/helpers/typeQueryBuilderHelper/typeQueryBuilderHelper.const';
 
 export const RULE_OPERATORS_TYPE_NAME = 'rule_operators';
 
@@ -12,7 +9,7 @@ export default {
     const transaction = await queryInterface.sequelize.transaction();
 
     try {
-      const createRuleOperatorsTypeQuery = getCreatePsqlTypeQuery({
+      const createRuleOperatorsTypeQuery = TypeQueryBuilderHelper.createType({
         name: RULE_OPERATORS_TYPE_NAME,
         asForm: psqlCreateTypeForms.ENUM,
         values: ['eq', 'ne', 'gte', 'gt', 'lt', 'lte', 'regexp', 'iRegexp'],
@@ -32,7 +29,7 @@ export default {
     const transaction = await queryInterface.sequelize.transaction();
 
     try {
-      const dropRuleOperatorsTypeQuery = getDropPsqlTypeQuery({
+      const dropRuleOperatorsTypeQuery = TypeQueryBuilderHelper.dropType({
         name: RULE_OPERATORS_TYPE_NAME,
       });
 

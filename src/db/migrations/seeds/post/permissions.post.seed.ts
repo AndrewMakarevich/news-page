@@ -10,6 +10,7 @@ export default {
 
     try {
       const createdAt = new Date().toISOString();
+
       const permissionsToSeed: (IPermissionsModelCreationAttributes &
         IDefaultModelAttributes)[] = Object.values(PERMISSIONS).map(
         (permission) => ({
