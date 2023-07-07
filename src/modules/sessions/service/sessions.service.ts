@@ -144,7 +144,7 @@ export class SessionsService {
 
     if (activeSessions.length >= MAX_SESSIONS_AMOUNT) {
       const sessionsAmountToDelete = Math.abs(
-        MAX_SESSIONS_AMOUNT - activeSessions.length + reserve,
+        MAX_SESSIONS_AMOUNT - activeSessions.length - reserve,
       );
 
       const sessionsIdsToDelete: string[] = [];

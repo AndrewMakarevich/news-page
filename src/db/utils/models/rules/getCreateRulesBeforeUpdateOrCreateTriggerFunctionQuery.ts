@@ -12,7 +12,9 @@ export const getCreateRulesBeforeUpdateOrCreateTriggerFunctionQuery = () => {
         is_table_exists boolean := true;
         is_column_exists boolean := true;
       BEGIN
-        IF (TG_OP = 'UPDATE' AND (OLD.table IS DISTINCT FROM NEW.table AND OLD.column IS DISTINCT FROM NEW.column)) THEN
+        IF (TG_OP = 'UPDATE' AND 
+          (OLD.table IS NOT DISTINCT FROM NEW.table AND OLD.column IS NOT DISTINCT FROM NEW.column)
+        ) THEN
           RETURN NEW;
         END IF;
 

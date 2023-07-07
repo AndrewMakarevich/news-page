@@ -19,7 +19,8 @@ interface IGetCreatePsqlCompositeTypeQuery extends IBaseGetCreatePsqlTypeQuery {
   values: ICompositeTypeValues[];
 }
 
-interface IGetCreatePsqlEnumTypeQuery extends IBaseGetCreatePsqlTypeQuery {
+export interface IGetCreatePsqlEnumTypeQuery
+  extends IBaseGetCreatePsqlTypeQuery {
   asForm: psqlCreateTypeForms.ENUM;
   values: string[];
 }
@@ -35,6 +36,6 @@ export type IGetCreatePsqlTypeQuery =
   | IGetCreatePsqlRangeTypeQuery;
 
 export interface IGetDropPsqlTypeQuery {
-  name: string;
+  types: string | string[];
   cascade?: boolean;
 }

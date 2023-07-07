@@ -5,7 +5,11 @@ import {
   Sequelize,
   Table,
 } from 'sequelize-typescript';
-import { RULE_OPERATORS_TYPE_NAME } from 'src/db/migrations/seeds/pre/rules.pre.seed';
+import {
+  RULE_ACTIONS_TYPE_NAME,
+  RULE_EFFECTS_TYPE_NAME,
+  RULE_OPERATORS_TYPE_NAME,
+} from 'src/db/migrations/seeds/pre/rules.pre.seed';
 import { UUIDV6_FUNCTION_NAME } from 'src/db/utils/common/getCreateUUIDV6PsqlFunctionQuery';
 
 @Table({})
@@ -16,6 +20,12 @@ export class Rules extends Model {
     primaryKey: true,
   })
   id: string;
+
+  @Column({
+    type: RULE_ACTIONS_TYPE_NAME,
+    allowNull: false,
+  })
+  action: string;
 
   @Column({
     type: DataType.STRING,
@@ -39,4 +49,9 @@ export class Rules extends Model {
     allowNull: false,
   })
   value: string;
+
+  @Column({
+    type: RULE_EFFECTS_TYPE_NAME,
+  })
+  effect: string;
 }
