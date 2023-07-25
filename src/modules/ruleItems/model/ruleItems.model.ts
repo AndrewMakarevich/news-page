@@ -1,18 +1,30 @@
 import {
   Column,
   DataType,
+  HasMany,
   Model,
   Sequelize,
   Table,
 } from 'sequelize-typescript';
 import { UUIDV6_FUNCTION_NAME } from '../../../db/utils/common/getCreateUUIDV6PsqlFunctionQuery';
 import {
+  IRuleArgumentContext,
+  IRuleArgumentValue,
+  IRuleItemModelAttributes,
+  IRuleItemModelCreationAttributes,
+  IRuleOperator,
+} from './ruleItems.model.interface';
+import {
   RULE_ITEM_ARGUMENT_CONTEXTS_TYPE_NAME,
   RULE_ITEM_OPERATORS_TYPE_NAME,
-} from '../../../db/migrations/seeds/pre/ruleItems.pre.seed';
+} from '../ruleItems.const';
+import { Rules } from '../../rules/model/rules.model';
 
 @Table({})
-export class RuleItems extends Model {
+export class RuleItems extends Model<
+  IRuleItemModelAttributes,
+  IRuleItemModelCreationAttributes
+> {
   @Column({
     primaryKey: true,
     type: DataType.UUID,
@@ -27,36 +39,33 @@ export class RuleItems extends Model {
 
   @Column({
     type: RULE_ITEM_ARGUMENT_CONTEXTS_TYPE_NAME,
+    allowNull: false,
   })
-  leftArgumentContext: string;
+  leftArgumentContext: IRuleArgumentContext;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.JSONB,
   })
-  leftArgumentTable: string;
-
-  @Column({
-    type: DataType.STRING,
-  })
-  leftArgumentColumn: string;
+  leftArgumentValue: IRuleArgumentValue;
 
   @Column({
     type: RULE_ITEM_OPERATORS_TYPE_NAME,
   })
-  operator: string;
+  operator: IRuleOperator;
 
   @Column({
     type: RULE_ITEM_ARGUMENT_CONTEXTS_TYPE_NAME,
   })
-  rightArgumentContext: string;
+  rightArgumentContext: IRuleArgumentContext;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.JSONB,
   })
-  rightArgumentTable: string;
+  rightArgumentValue: IRuleArgumentValue;
 
-  @Column({
-    type: DataType.STRING,
-  })
-  rightArgumentColumn: string;
+  @HasMany(() => Rules, { foreignKey: 'targetRuleId' })
+  rulesWhereRuleItemIsTarget: Rules[];
+
+  @HasMany(() => Rules, { foreignKey: 'conditionRuleId' })
+  rulesWhereRuleItemIsCondition: Rules[];
 }

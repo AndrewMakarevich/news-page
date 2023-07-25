@@ -1,16 +1,14 @@
 import {
+  BelongsTo,
   Column,
   DataType,
+  ForeignKey,
   Model,
   Sequelize,
   Table,
 } from 'sequelize-typescript';
-import {
-  RULE_ACTIONS_TYPE_NAME,
-  RULE_EFFECTS_TYPE_NAME,
-  RULE_OPERATORS_TYPE_NAME,
-} from 'src/db/migrations/seeds/pre/rules.pre.seed';
 import { UUIDV6_FUNCTION_NAME } from 'src/db/utils/common/getCreateUUIDV6PsqlFunctionQuery';
+import { RuleItems } from '../../../db/models/models';
 
 @Table({})
 export class Rules extends Model {
@@ -21,37 +19,15 @@ export class Rules extends Model {
   })
   id: string;
 
-  @Column({
-    type: RULE_ACTIONS_TYPE_NAME,
-    allowNull: false,
-  })
-  action: string;
+  @ForeignKey(() => RuleItems)
+  targetRuleId: string;
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  table: string;
+  @ForeignKey(() => RuleItems)
+  conditionRuleId: string;
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  column: string;
+  @BelongsTo(() => RuleItems)
+  targetRule: RuleItems;
 
-  @Column({
-    type: RULE_OPERATORS_TYPE_NAME,
-  })
-  operator: string;
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  value: string;
-
-  @Column({
-    type: RULE_EFFECTS_TYPE_NAME,
-  })
-  effect: string;
+  @BelongsTo(() => RuleItems)
+  conditionRule: RuleItems;
 }

@@ -1,6 +1,5 @@
 import { Module, DynamicModule } from '@nestjs/common';
-import { createTransport, TransportOptions } from 'nodemailer';
-import SMTPTransport from 'nodemailer/lib/smtp-transport';
+import { createTransport } from 'nodemailer';
 import { NODEMAILER_TRANSPORTER_PROVIDER_NAME } from './nodemailer.const';
 import { ICreateTransportParameters } from './nodemailer.module.interface';
 import { NodeMailerService } from './service/nodemailer.service';

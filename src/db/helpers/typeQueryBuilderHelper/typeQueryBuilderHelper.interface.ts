@@ -16,13 +16,13 @@ interface IBaseGetCreatePsqlTypeQuery {
 
 interface IGetCreatePsqlCompositeTypeQuery extends IBaseGetCreatePsqlTypeQuery {
   asForm?: psqlCreateTypeForms.COMPOSITE;
-  values: ICompositeTypeValues[];
+  values: readonly ICompositeTypeValues[];
 }
 
 export interface IGetCreatePsqlEnumTypeQuery
   extends IBaseGetCreatePsqlTypeQuery {
   asForm: psqlCreateTypeForms.ENUM;
-  values: string[];
+  values: readonly string[];
 }
 
 interface IGetCreatePsqlRangeTypeQuery extends IBaseGetCreatePsqlTypeQuery {
@@ -36,6 +36,6 @@ export type IGetCreatePsqlTypeQuery =
   | IGetCreatePsqlRangeTypeQuery;
 
 export interface IGetDropPsqlTypeQuery {
-  types: string | string[];
+  types: string | readonly string[];
   cascade?: boolean;
 }

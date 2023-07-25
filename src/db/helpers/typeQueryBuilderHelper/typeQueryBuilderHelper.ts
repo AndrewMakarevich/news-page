@@ -45,7 +45,7 @@ export class TypeQueryBuilderHelper {
     return `DROP TYPE IF EXISTS ${typesNames} ${cascade ? 'CASCADE' : ''};`;
   }
 
-  private static typesAreStringArray(types: any): types is string[] {
+  private static typesAreStringArray(types: any): types is readonly string[] {
     return types.length !== undefined && typeof types[0] === 'string';
   }
 }

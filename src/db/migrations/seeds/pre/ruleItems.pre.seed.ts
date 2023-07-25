@@ -1,46 +1,11 @@
 import { QueryInterface } from 'sequelize';
 import { TypeQueryBuilderHelper } from 'src/db/helpers/typeQueryBuilderHelper/typeQueryBuilderHelper';
-export const RULE_ITEM_OPERATORS_TYPE_NAME = 'rule_item_operators';
-export const RULE_ITEM_ARGUMENT_CONTEXTS_TYPE_NAME = 'rule_item_contexts';
-export const RULE_ITEM_ARGUMENT_SPHERES_TYPE_NAME = 'rule_item_spheres';
-
-// TO REWORK
-
-// type a = {
-//   column: string;
-// };
-//
-// type innerA = {
-//   name: string;
-//   column?: string;
-// };
-//
-// type b = {
-//   table: innerA | innerB;
-// };
-//
-// type innerB =
-//   | innerA
-//   | {
-//       name: string;
-//       table?: innerB;
-//     };
-// const test: a | b = {
-//   table: {
-//     name: 'Collections',
-//     table: {
-//       name: 'CollectionLikes',
-//       column: 'userId',
-//     },
-//   },
-// };
-//
-// const test1: a | b = {
-//   table: {
-//     name: 'Collections',
-//     column: 'userId',
-//   },
-// };
+import {
+  RULE_ITEM_ARGUMENT_CONTEXTS,
+  RULE_ITEM_ARGUMENT_CONTEXTS_TYPE_NAME,
+  RULE_ITEM_OPERATORS,
+  RULE_ITEM_OPERATORS_TYPE_NAME,
+} from '../../../../modules/ruleItems/ruleItems.const';
 
 export default {
   up: async (queryInterface: QueryInterface) => {
@@ -50,23 +15,17 @@ export default {
       const createRuleItemOperatorsTypeQuery =
         TypeQueryBuilderHelper.createEnumType({
           name: RULE_ITEM_OPERATORS_TYPE_NAME,
-          values: ['eq', 'ne', 'gte', 'gt', 'lt', 'lte', 'regexp', 'iRegexp'],
+          values: RULE_ITEM_OPERATORS,
         });
       const createRuleItemContextsTypeQuery =
         TypeQueryBuilderHelper.createEnumType({
           name: RULE_ITEM_ARGUMENT_CONTEXTS_TYPE_NAME,
-          values: ['environment', 'subject', 'object', 'constant'],
-        });
-      const createRuleItemsSpheresTypeQuery =
-        TypeQueryBuilderHelper.createEnumType({
-          name: RULE_ITEM_ARGUMENT_SPHERES_TYPE_NAME,
-          values: ['table', 'column'],
+          values: RULE_ITEM_ARGUMENT_CONTEXTS,
         });
 
       const rulesTypesBulkQuery = `
       ${createRuleItemOperatorsTypeQuery} 
-      ${createRuleItemContextsTypeQuery}
-      ${createRuleItemsSpheresTypeQuery}`;
+      ${createRuleItemContextsTypeQuery}`;
 
       await queryInterface.sequelize.query(rulesTypesBulkQuery, {
         transaction,
@@ -85,7 +44,7 @@ export default {
       const dropRuleOperatorsTypeQuery = TypeQueryBuilderHelper.dropType({
         types: [
           RULE_ITEM_OPERATORS_TYPE_NAME,
-          RULE_ITEM_ARGUMENT_SPHERES_TYPE_NAME,
+          RULE_ITEM_ARGUMENT_CONTEXTS_TYPE_NAME,
         ],
       });
 

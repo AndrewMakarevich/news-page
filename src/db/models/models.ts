@@ -11,3 +11,4 @@ export { PostsCollections } from '../../modules/postsCollections/model/postsColl
 export { Sessions } from '../../modules/sessions/model/sessions.model';
 export { Images } from '../../modules/images/model/images.model';
 export { Rules } from '../../modules/rules/model/rules.model';
+export { RuleItems } from '../../modules/ruleItems/model/ruleItems.model';

@@ -10,6 +10,7 @@ export default {
   up: async (queryInterface: QueryInterface) => {
     const transaction = await queryInterface.sequelize.transaction();
 
+    // TODO rebase and rework these trigger to ruleItems table
     try {
       const beforeUpdateOrCreateTriggerFunctionQuery =
         getCreateRulesBeforeUpdateOrCreateTriggerFunctionQuery();
