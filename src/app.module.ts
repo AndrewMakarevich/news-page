@@ -18,6 +18,7 @@ import {
   Sessions,
   Images,
   Rules,
+  RuleItems,
 } from './db/models/models';
 import { RolesModule } from './modules/roles/roles.module';
 import { PermissionsModule } from './modules/permissions/permissions.module';
@@ -34,6 +35,8 @@ import { RedisModule } from './modules/redis/redis.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { TokensModule } from './modules/tokens/tokens.module';
 import { NodeMailerModule } from './modules/nodemailer/nodemailer.module';
+import { RulesModule } from './modules/rules/rules.module';
+import { RuleItemsModule } from './modules/ruleItems/ruleItems.module';
 
 dotenv.config();
 const sequelizeConfig = dbConfig[env.NODE_ENV || 'development'];
@@ -52,10 +55,10 @@ const sequelizeConfig = dbConfig[env.NODE_ENV || 'development'];
     PostsCollectionsModule,
     SessionsModule,
     ImagesModule,
-    TagsModule,
-    CommentsModule,
     TokensModule,
     AuthModule,
+    RulesModule,
+    RuleItemsModule,
     SequelizeModule.forRoot({
       ...sequelizeConfig,
       autoLoadModels: true,
@@ -74,6 +77,7 @@ const sequelizeConfig = dbConfig[env.NODE_ENV || 'development'];
         Sessions,
         Images,
         Rules,
+        RuleItems,
       ],
       logging: console.log,
     }),
